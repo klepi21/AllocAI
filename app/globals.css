@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #B3A288;
+  --primary-glow: rgba(179, 162, 136, 0.4);
+  --glass-bg: rgba(8, 8, 8, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.15);
+}
+
+@layer base {
+  body {
+    @apply bg-[#080808] text-white selection:bg-[#B3A288]/30 selection:text-[#B3A288] antialiased font-sans;
+  }
+}
+
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 12s linear infinite;
+  }
+  
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  }
+
+  .primary-glow {
+    text-shadow: 0 0 10px var(--primary-glow);
+  }
+
+  .btn-primary {
+    @apply bg-[#B3A288] hover:bg-[#C5B499] text-black font-bold py-2.5 px-6 rounded-xl transition-all active:scale-95 shadow-lg shadow-[#B3A288]/10;
+  }
+}
