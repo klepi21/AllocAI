@@ -13,8 +13,8 @@ require("dotenv").config();
 const RPC_URL = process.env.NEXT_PUBLIC_KITE_RPC || "https://rpc.gokite.ai/"; 
 const PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
 
-// The official USDC on Kite Mainnet
-const USDC_TOKEN = process.env.NEXT_PUBLIC_USDC_TOKEN || "0xD23C51ddDD9D6e9C1F9b17e7fE91EAF7EE3F8167";
+// The official USDC.e on Kite Mainnet (6 decimals)
+const USDC_TOKEN = process.env.NEXT_PUBLIC_USDC_TOKEN || "0x7aB6f3ed87C42eF0aDb67Ed95090f8bF5240149e";
 
 // The authorized agent (your server-side relay wallet)
 const AGENT_ADDRESS = process.env.AGENT_ADDRESS || "0xE5f3e81f3045865EB140fCC44038433891D0e25f";

@@ -23,9 +23,10 @@ contract AllocAIVault {
 
     // --- Kite Ecosystem Official Addresses (Verified) ---
     address public constant SERVICE_REGISTRY = 0xc67a4AbcD8853221F241a041ACb1117b38DA587F;
-    address public constant ACCOUNT_FACTORY = 0xF0Fc19F0dc393867F19351d25EDfc5E099561cb7;
+    // DEPRECATED: ACCOUNT_FACTORY = 0xF0Fc19F0dc393867F19351d25EDfc5E099561cb7;
     
-    // Dynamic Bridge Address (Discovered via Service Registry)
+    // Dynamic Bridge Address (Discovered via Service Registry or LayerZero Executor)
+    // Lucid bridging on Kite uses LayerZero: 0xe93685f3bBA03016F02bD1828BaDD6195988D950
     address public bridgeAggregator;
 
     struct Strategy {
@@ -113,12 +114,11 @@ contract AllocAIVault {
      * @dev Dynamically discovers the official Bridge from the Kite Service Registry.
      */
     function updateBridgeFromRegistry() external onlyAuthorized {
-        // address discovered = IServiceRegistry(SERVICE_REGISTRY).getServiceAddress("Via Bridge");
+        // address discovered = IServiceRegistry(SERVICE_REGISTRY).getServiceAddress("Lucid LayerZero Bridge");
         // bridgeAggregator = discovered;
         
-        // FOR THE DEMO: We set the verified FluidBridgeProxy manually to ensure the live path works.
-        // Once the Registry is live, the code above replaces this manual setter.
-        bridgeAggregator = 0xe3f598EdffC6599170B84f4d7F4E32046c1902b6;
+        // FOR MAINNET: We set the verified LayerZero Executor shared by the Kite Team.
+        bridgeAggregator = 0xe93685f3bBA03016F02bD1828BaDD6195988D950;
     }
 
     /**
@@ -141,10 +141,11 @@ contract AllocAIVault {
         bytes32 targetChainHash = keccak256(abi.encodePacked(_chain));
 
         if (targetChainHash != kiteChainHash && bridgeAggregator != address(0)) {
+            // Updated LayerZero / Lucid bridge call logic
             (bool bridgeSuccess, ) = bridgeAggregator.call(
-                abi.encodeWithSignature("bridgeTokens(address,uint256,string)", USDC_TOKEN, totalAssets(), _chain)
+                abi.encodeWithSignature("send(address,uint256,string)", USDC_TOKEN, totalAssets(), _chain)
             );
-            require(bridgeSuccess, "Cross-chain bridge request failed");
+            require(bridgeSuccess, "LayerZero cross-chain bridge request failed");
         } 
         else if (_targetContract != address(0) && _executionData.length > 0) {
             (bool success, ) = _targetContract.call(_executionData);

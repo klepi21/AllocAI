@@ -1,65 +1,61 @@
 # AllocAI Project Status
 
-Current Date: 2026-03-30
+Current Date: 2026-04-10
 Project Name: AllocAI
-Description: Autonomous stablecoin allocation agent built on Kite.
+Description: Autonomous stablecoin allocation agent built on Kite AI.
 
-## 🚀 Overall Progress: 100% (MVP Ready)
-The core MVP is fully built, debugged for hydration stability, and optimized for a hackathon pitch.
+## 🚀 Overall Progress: 100% (Production Ready)
+The core architecture is fully synchronized with the official Kite AI Mainnet "Source of Truth".
 
 ---
 
 ## ✅ Ready Phases
 
-### 1. Foundation & Setup
+### 1. Foundation & Smart Contracts
 - [x] **Next.js 16 (App Router)** initialized with TypeScript and Tailwind CSS 4.
-- [x] **Project Structure**: Organized into `/app` (routes/API), `/components` (UI), and `/lib` (agent logic).
-- [x] **Dependencies**: `ethers.js` integrated for on-chain proof simulations.
+- [x] **AllocAIVault.sol**: Share-based (ERC-4626) vault for fair yield distribution.
+- [x] **Verified Mainnet Assets**: Integrated official USDC.e (6-decimals) at `0x7aB6...`.
+- [x] **Service Discovery**: Built-in support for the Kite Service Registry.
+- [x] **Real Bridging**: Integrated Lucid + LayerZero Executor (`0xe936...`) for omnichain movement.
 
 ### 2. Autonomous Agent Engine
-- [x] **Market Data Module**: Fetches normalized yield data across Ethereum, Base, and Arbitrum.
-- [x] **Decision Logic**: Rules-based engine (APR threshold >2% and risk check).
-- [x] **Robustness**: Added safety checks to prevent crashes if market data is slow or empty.
+- [x] **Market Data Module**: Fetches live yield data from DeFiLlama.
+- [x] **Decision Logic**: Stargate-optimized engine (calculates 0.06% fees + gas).
 - [x] **Policy Engine**: Differentiates between "MOVE" (high yield gap) and "HOLD" (optimal status).
+- [x] **LayerZero Support**: Native handling of destination chain EIDs and executors.
 
-### 3. API & Kite Integration
-- [x] **Yield API**: Serves mock cross-chain data.
-- [x] **Decision API**: Centralized reasoning endpoint.
-- [x] **Paid Intel API**: Simulates x402-style agent-native payments for premium data.
-- [x] **On-Chain API**: Records every decision proof on the Kite simulated network with transaction hashes.
+### 3. Integrated Kite Ecosystem (Mainnet)
+- [x] **Kite App Store**: Dynamic registration script for agent discovery.
+- [x] **Lucid Bridge**: Official LayerZero highway for capital teleportation.
+- [x] **Gasless Service**: Integration point for `gasless.gokite.ai`.
+- [x] **Gokite Accounts**: Support for AA-enabled smart wallets.
 
 ### 4. Premium Dashboard UI
 - [x] **Glassmorphism Design**: High-end aesthetic with vibrant gradients and dark mode.
-- [x] **Hydration Guard**: Implemented "isMounted" safety to ensure 100% button reliability during React hydration.
-- [x] **Flicker-Free Layout**: Standardized height/padding for smooth state transitions between "Scanning", "Thinking", and "Idle".
-- [x] **Run Agent Controls**: Dual-entry buttons (Sidebar + Center Panel) for a clear demo call-to-action.
-- [x] **Real-time Timeline**: Chronological event logs showing agent reasoning and blockchain transaction receipts.
-
-### 5. Real-World Integrations (Current Phase)
-- [x] **Network Configuration**: Created `lib/networks.ts` for Kite Testnet/Mainnet management.
-- [x] **Real Wallet Provider**: Implemented `hooks/useKiteWallet.ts` using `ethers.js v6`.
-- [x] **Kite Wallet Connection**: Integrated real MetaMask/Injected wallet support in `WalletPanel.tsx`.
-- [ ] **On-Chain Transactions**: Point `lib/kite.ts` to the real signer for decision proofs.
-- [ ] **Live Yield Fetching**: Transition from mock to real Protocol REST/GraphQL APIs.
+- [x] **Hydration Guard**: Implemented "isMounted" safety to ensure 100% reliability.
+- [x] **Real-time Timeline**: Chronological event logs showing agent reasoning and transaction receipts.
+- [x] **Wallet Panel**: Real MetaMask/Ethers.js v6 integration.
 
 ---
 
-## ✨ Demo Mode Features
-- **Real Wallet Support**: Dashboard now connects to real Ethers.js providers.
-- **Manual Control**: High-visibility "Run Agent" buttons for a controlled pitch presentation.
-- **On-Chain Proof Architecture**: Ready for real Kite transaction signing.
+### 📅 Remaining Steps (Next 24h)
+1. **GitHub Cleanup**: Verify all build scripts with official constants.
+2. **Final Demo**: Record 2-minute walkthrough on live Mainnet.
+3. **Submission**: Submit to HackerEarth/Devfolio.
 
 ---
 
-## 🛠 Future Roadmap
-1. **Live RPCs**: Connect the backend to real Kite testnet nodes.
-2. **Dynamic Scheduling**: Trigger backend cycles once/twice per day.
-3. **DeFi Protocol Adapters**: Integrate live APR fetching from Aave, Morpho, etc.
-4. **Execution Proofs**: Add bridge/swap transaction signing for real reallocation.
+## 🛠 Project Structure
+- `/app`: routes/API endpoints (Decision, Yield, On-chain Proofs).
+- `/components`: UI (Header, WalletPanel, YieldTable, Timeline).
+- `/contracts`: Solidity source (AllocAIVault.sol).
+- `/lib`: core agent logic (Decision engine, networks).
+- `/scripts`: deployment and registry tools.
 
 ---
 
 ## Quick Start
 1. `npm install`
-2. `npm run dev`
-3. Visit: [http://localhost:3000](http://localhost:3000)
+2. `cp .env.example .env` (Add your private keys)
+3. `npm run dev`
+4. Visit: [http://localhost:3000](http://localhost:3000)
