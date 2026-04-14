@@ -29,6 +29,20 @@ function maybeAddress(value: unknown): string | null {
   return typeof value === "string" && ethers.isAddress(value) ? value : null;
 }
 
+function collectAddressesDeep(value: unknown, out: Set<string>): void {
+  if (typeof value === "string") {
+    if (ethers.isAddress(value)) out.add(value.toLowerCase());
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectAddressesDeep(item, out));
+    return;
+  }
+  if (value && typeof value === "object") {
+    Object.values(value as Record<string, unknown>).forEach((item) => collectAddressesDeep(item, out));
+  }
+}
+
 function extractPayerAddress(bodyAddress: string | undefined, authorization: Record<string, unknown> | undefined): string | null {
   const direct = maybeAddress(bodyAddress);
   if (direct) return direct;
@@ -52,6 +66,10 @@ function extractPayerAddress(bodyAddress: string | undefined, authorization: Rec
     const addr = maybeAddress(candidate);
     if (addr) return addr;
   }
+  const deepAddresses = new Set<string>();
+  collectAddressesDeep(authorization, deepAddresses);
+  const picked = [...deepAddresses][0];
+  if (picked && ethers.isAddress(picked)) return picked;
   return null;
 }
 
@@ -78,7 +96,7 @@ export async function POST(req: Request) {
 
   let paymentReference = "";
   let settlementReference = "";
-  const payerAddress = extractPayerAddress(body.payerAddress, parsedPayment?.authorization);
+  let payerAddress = extractPayerAddress(body.payerAddress, parsedPayment?.authorization);
 
   if (directPaymentTxHash) {
     const verification = await verifyDirectPaymentOnChain({
@@ -97,6 +115,15 @@ export async function POST(req: Request) {
     }
     paymentReference = verification.paymentReference;
     settlementReference = verification.settlementReference;
+    if (!payerAddress && ethers.isAddress(verification.paymentReference)) {
+      try {
+        const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_KITE_RPC || "https://rpc.gokite.ai/");
+        const tx = await provider.getTransaction(verification.paymentReference);
+        if (tx?.from && ethers.isAddress(tx.from)) payerAddress = tx.from;
+      } catch {
+        // Keep null payer fallback if tx lookup fails.
+      }
+    }
     console.log(`[direct-payment] verified tx=${directPaymentTxHash}`);
   } else {
     if (!parsedPayment) {

@@ -76,13 +76,19 @@ export function getAllRuns(): StoredPaidRun[] {
 export function getLatestPaidRunByAddress(address: string): StoredPaidRun | null {
   const lower = address.toLowerCase();
   const store = getStore();
-  return store.find((item) => item.payerAddress?.toLowerCase() === lower) || null;
+  const exact = store.find((item) => item.payerAddress?.toLowerCase() === lower);
+  if (exact) return exact;
+  return store.find((item) => item.payerAddress === null && (item.runType || "paid") === "paid") || null;
 }
 
 export function getRecentPaidRunsByAddress(address: string, limit: number): StoredPaidRun[] {
   const lower = address.toLowerCase();
   const store = getStore();
-  return store.filter((item) => item.payerAddress?.toLowerCase() === lower).slice(0, limit);
+  const exact = store.filter((item) => item.payerAddress?.toLowerCase() === lower).slice(0, limit);
+  if (exact.length) return exact;
+  return store
+    .filter((item) => item.payerAddress === null && (item.runType || "paid") === "paid")
+    .slice(0, limit);
 }
 
 export function getPaidRunById(runId: string): StoredPaidRun | null {
