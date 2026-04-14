@@ -132,6 +132,7 @@ Minimum variables for paid flow + proof:
 - `X402_PAY_TO_ADDRESS`
 - `X402_MAX_AMOUNT_REQUIRED_WEI`
 - `X402_MERCHANT_NAME`
+- `RUN_STORE_PATH` (recommended on VPS, e.g. `/var/lib/allocai/runs.json`)
 
 ## Run Locally
 

@@ -1,5 +1,6 @@
 import { AgentDecision, TimelineEvent } from "@/lib/types";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 export interface StoredPaidRun {
@@ -20,7 +21,7 @@ type GlobalStore = typeof globalThis & {
   __allocaiPaidRuns?: StoredPaidRun[];
 };
 
-const STORE_FILE_PATH = path.join(process.cwd(), ".tmp", "allocai-runs.json");
+const STORE_FILE_PATH = process.env.RUN_STORE_PATH || path.join(os.tmpdir(), "allocai-runs.json");
 
 function loadStoreFromDisk(): StoredPaidRun[] {
   try {
@@ -29,7 +30,8 @@ function loadStoreFromDisk(): StoredPaidRun[] {
     if (!raw.trim()) return [];
     const parsed = JSON.parse(raw) as StoredPaidRun[];
     return Array.isArray(parsed) ? parsed : [];
-  } catch {
+  } catch (error) {
+    console.error("[run-store] failed to load from disk", error);
     return [];
   }
 }
@@ -39,8 +41,8 @@ function persistStoreToDisk(runs: StoredPaidRun[]): void {
     const dir = path.dirname(STORE_FILE_PATH);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(STORE_FILE_PATH, JSON.stringify(runs), "utf8");
-  } catch {
-    // Best effort persistence; in-memory fallback remains active.
+  } catch (error) {
+    console.error("[run-store] failed to persist to disk", error);
   }
 }
 
