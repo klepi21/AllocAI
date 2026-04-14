@@ -73,8 +73,9 @@ export function isLikelyHexSignature(signature: string): boolean {
 export function buildX402Challenge(resource: string): X402ChallengeResponse {
   const network = process.env.X402_NETWORK || "kite-testnet";
   const payTo = process.env.X402_PAY_TO_ADDRESS || process.env.SERVICE_WALLET_ADDRESS || "";
-  const maxAmountRequired = process.env.X402_MAX_AMOUNT_REQUIRED_WEI || "250000000000000000";
-  const asset = process.env.X402_ASSET || "0x0fF5393387ad2f9f691FD6Fd28e07E3969e27e63";
+  // For tokenized x402 payments this is in token base units (not wei unless token has 18 decimals).
+  const maxAmountRequired = process.env.X402_MAX_AMOUNT_REQUIRED_ASSET_UNITS || "250000"; // 0.25 USDC.e (6 decimals)
+  const asset = process.env.X402_ASSET || "0x7aB6f3ed87C42eF0aDb67Ed95090f8bF5240149e"; // USDC.e on Kite mainnet
   const merchantName = process.env.X402_MERCHANT_NAME || "AllocAI";
 
   return {

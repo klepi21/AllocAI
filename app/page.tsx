@@ -210,6 +210,7 @@ const CHAIN_LOGOS: Record<string, string> = {
 
 const USDC_LOGO = "https://icons.llama.fi/usd-coin.jpg";
 const FIXED_AGENT_FEE_KITE = "0.25";
+const DIRECT_KITE_FEE_WEI = ethers.parseEther(FIXED_AGENT_FEE_KITE);
 const PREMIUM_UNLOCK_WINDOW_MS = 10 * 60 * 1000;
 const KITE_EXPLORER_BASE =
   process.env.NEXT_PUBLIC_KITE_NETWORK?.toLowerCase() === "testnet" ||
@@ -511,9 +512,10 @@ export default function Home() {
     };
   }, [showAgentModal, address, signer, paymentRequirement]);
 
-  const requiredPaymentWei = paymentRequirement ? BigInt(paymentRequirement.maxAmountRequired) : 0n;
+  const requiredX402TokenUnits = paymentRequirement ? BigInt(paymentRequirement.maxAmountRequired) : 0n;
+  const requiredByModeUnits = paymentMode === "direct" ? DIRECT_KITE_FEE_WEI : requiredX402TokenUnits;
   const activeBalanceWei = paymentMode === "direct" ? nativeKiteBalanceWei : x402TokenBalanceWei;
-  const hasSufficientBalance = activeBalanceWei !== null && activeBalanceWei >= requiredPaymentWei;
+  const hasSufficientBalance = activeBalanceWei !== null && activeBalanceWei >= requiredByModeUnits;
   const parsedStakeAmount = Number(paidStakeAmount);
   const hasValidStakeAmount = Number.isFinite(parsedStakeAmount) && parsedStakeAmount > 0;
   const readyForPayment =
@@ -640,7 +642,7 @@ export default function Home() {
         if (paymentMode === "direct") {
           if (!signer || !address) throw new Error("Connect wallet first for direct KITE payment.");
           const paymentRequest = challenge.accepts?.[0];
-          if (!paymentRequest?.payTo || !paymentRequest.maxAmountRequired) {
+          if (!paymentRequest?.payTo) {
             throw new Error("Payment configuration missing from server challenge.");
           }
           addEvent(`Submitting direct KITE payment to ${paymentRequest.payTo.slice(0, 10)}...`, "payment");
@@ -648,7 +650,7 @@ export default function Home() {
           const paymentToast = toast.loading(`Waiting wallet confirmation for ${FIXED_AGENT_FEE_KITE} KITE payment...`);
           const paymentTx = await signer.sendTransaction({
             to: paymentRequest.payTo,
-            value: BigInt(paymentRequest.maxAmountRequired)
+            value: DIRECT_KITE_FEE_WEI
           });
           toast.dismiss(paymentToast);
           const paymentMiningToast = toast.loading(`Payment submitted: ${paymentTx.hash.slice(0, 12)}...`);
@@ -994,9 +996,9 @@ export default function Home() {
                     Required:{" "}
                     <span className="text-white">
                       {paymentRequirement
-                        ? `${Number(ethers.formatEther(requiredPaymentWei)).toFixed(4)} ${
-                            paymentMode === "direct" ? "KITE" : "x402 token"
-                          }`
+                        ? paymentMode === "direct"
+                          ? `${Number(ethers.formatEther(requiredByModeUnits)).toFixed(4)} KITE`
+                          : `${Number(ethers.formatUnits(requiredByModeUnits, 6)).toFixed(4)} USDC.e`
                         : "..."}
                     </span>
                   </p>
@@ -1006,9 +1008,9 @@ export default function Home() {
                       {paymentBalanceLoading
                         ? "Loading..."
                         : activeBalanceWei !== null
-                          ? `${Number(ethers.formatEther(activeBalanceWei)).toFixed(4)} ${
-                              paymentMode === "direct" ? "KITE" : "x402 token"
-                            }`
+                          ? paymentMode === "direct"
+                            ? `${Number(ethers.formatEther(activeBalanceWei)).toFixed(4)} KITE`
+                            : `${Number(ethers.formatUnits(activeBalanceWei, 6)).toFixed(4)} USDC.e`
                           : "Unavailable"}
                     </span>
                   </p>
@@ -1016,7 +1018,7 @@ export default function Home() {
                     <p className="mt-2 text-[8px] font-black uppercase tracking-[0.15em] text-red-300">
                       {paymentMode === "direct"
                         ? "Insufficient KITE balance for direct payment."
-                        : "Insufficient x402 token balance."}
+                        : "Insufficient USDC.e balance for x402 payment."}
                     </p>
                   ) : null}
                 </div>

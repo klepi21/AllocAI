@@ -80,6 +80,7 @@ function getResourceUrl(req: Request): string {
 
 export async function POST(req: Request) {
   const startedAt = Date.now();
+  const directKiteFeeWei = process.env.DIRECT_KITE_FEE_WEI || ethers.parseEther("0.25").toString();
   const directPaymentTxHash = req.headers.get("X-DIRECT-PAYMENT-TX");
   const paymentHeader = req.headers.get("X-PAYMENT");
   const parsedPayment = parseXPaymentHeader(paymentHeader);
@@ -102,7 +103,7 @@ export async function POST(req: Request) {
     const verification = await verifyDirectPaymentOnChain({
       txHash: directPaymentTxHash,
       expectedPayTo: paymentRequest.payTo,
-      minAmountWei: paymentRequest.maxAmountRequired,
+      minAmountWei: directKiteFeeWei,
       expectedPayer: body.payerAddress
     });
     if (!verification.ok) {

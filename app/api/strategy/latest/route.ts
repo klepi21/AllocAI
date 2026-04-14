@@ -291,7 +291,7 @@ export async function GET(req: Request) {
 
   if (!runs.length) {
     const payTo = process.env.X402_PAY_TO_ADDRESS;
-    const minAmountWei = BigInt(process.env.X402_MAX_AMOUNT_REQUIRED_WEI || "0");
+    const minAmountWei = BigInt(process.env.DIRECT_KITE_FEE_WEI || "0");
     if (payTo && ethers.isAddress(payTo) && minAmountWei > 0n) {
       const payerTxs = await fetchKitescanTransactions(address, 100);
       let proofTxs: BlockscoutTx[] = [];

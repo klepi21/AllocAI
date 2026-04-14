@@ -130,7 +130,8 @@ Minimum variables for paid flow + proof:
 - `X402_NETWORK`
 - `X402_ASSET`
 - `X402_PAY_TO_ADDRESS`
-- `X402_MAX_AMOUNT_REQUIRED_WEI`
+- `X402_MAX_AMOUNT_REQUIRED_ASSET_UNITS` (token base units, e.g. `250000` for `0.25 USDC.e`)
+- `DIRECT_KITE_FEE_WEI` (native KITE wei, e.g. `250000000000000000` for `0.25 KITE`)
 - `X402_MERCHANT_NAME`
 - `RUN_STORE_PATH` (recommended on VPS, e.g. `/var/lib/allocai/runs.json`)
 
