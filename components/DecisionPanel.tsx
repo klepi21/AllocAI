@@ -50,14 +50,21 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
     }
   };
 
-  const currentDisplay =
+  const currentDisplay: AgentDecision | null =
     decision ||
     (status === "idle" && latestHistoryDecision
       ? {
           action: latestHistoryDecision.action.toLowerCase() === "move" ? "move" : "hold",
           confidence: latestHistoryDecision.confidence,
           reason: latestHistoryDecision.reason,
-          selectedOpportunity: { protocol: latestHistoryDecision.protocol, apr: 0 },
+          selectedOpportunity: {
+            chain: "Kite",
+            protocol: latestHistoryDecision.protocol,
+            asset: "USDC",
+            apr: 0,
+            risk: "low",
+            liquidity: 0
+          },
           paidDataUsed: true,
           proofReceipt: latestHistoryDecision.txHash
             ? {
