@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "agent:worker": "node agent/worker.js",
+    "agent:apr-check": "node agent/apr-checker.js",
+    "autonomous:tick": "node scripts/autonomous-runner.mjs"
   },
   "dependencies": {
     "ethers": "^6.16.0",

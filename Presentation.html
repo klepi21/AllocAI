@@ -1,172 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllocAI | Product Presentation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --accent: #B3A288; --bg: #080808; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            margin: 0; 
-            padding: 0;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-        .slide {
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            padding: 3rem 5rem;
-            position: relative;
-            box-sizing: border-box;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 2.5rem;
-        }
-        .accent-text { color: var(--accent); }
-        .pill { 
-            background: rgba(179, 162, 136, 0.1); 
-            border: 1px solid rgba(179, 162, 136, 0.2); 
-            padding: 8px 18px; 
-            border-radius: 12px; 
-            font-size: 10px; 
-            font-weight: 900; 
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--accent);
-        }
-        .ethereal-glow {
-            position: absolute;
-            width: 50vw;
-            height: 50vh;
-            background: radial-gradient(circle, rgba(179,162,136,0.05) 0%, transparent 70%);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        @media print {
-            .slide { page-break-after: always; height: 100vh !important; display: flex !important; visibility: visible !important; position: relative !important; }
-            body { background: var(--bg) !important; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllocAI | Product Presentation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #080808; --panel: #151515; --accent: #B3A288; }
+    body {
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: #fff;
+      padding: 28px 20px 64px;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .deck-shell {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .deck-toolbar {
+      width: min(1180px, 100%);
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: flex-end;
+      position: sticky;
+      top: 10px;
+      z-index: 60;
+    }
+    .download-btn {
+      border: 1px solid rgba(179, 162, 136, 0.45);
+      background: rgba(8, 8, 8, 0.9);
+      color: #f8dba8;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 160ms ease;
+      backdrop-filter: blur(8px);
+    }
+    .download-btn:hover {
+      background: rgba(179, 162, 136, 0.12);
+      color: #fff;
+      border-color: rgba(179, 162, 136, 0.75);
+    }
+    .slide {
+      min-height: 760px;
+      padding: 48px 64px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(11,11,11,0.96), rgba(8,8,8,0.98));
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    .panel {
+      background: rgba(21, 21, 21, 0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+    }
+    .pill {
+      border: 1px solid rgba(179,162,136,0.35);
+      background: rgba(179,162,136,0.1);
+      color: var(--accent);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+    }
+    .accent { color: var(--accent); }
+    .emph {
+      font-weight: 900;
+      color: #f8dba8;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .glow {
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(179,162,136,0.12) 0%, rgba(179,162,136,0.02) 35%, transparent 70%);
+      pointer-events: none;
+    }
+    @media print {
+      body { padding: 0; background: #080808; }
+      .deck-toolbar { display: none !important; }
+      .deck-shell { width: 100%; gap: 0; }
+      .slide {
+        page-break-after: always;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="ethereal-glow" style="top: -10%; left: -10%;"></div>
-    
-    <!-- SLIDE 1: DASHBOARD HERO -->
-    <section class="slide">
-        <div class="flex items-center justify-between w-full mb-16 relative z-10">
-            <div class="flex flex-col">
-                <h1 class="text-6xl font-black tracking-tighter">Alloc<span class="accent-text">AI</span></h1>
-                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mt-2">Autonomous Yield Protocol</p>
-            </div>
-            <div class="flex gap-4">
-                <div class="pill">Kite Mainnet</div>
-                <div class="pill border-emerald-500/30 text-emerald-400 bg-emerald-500/5">Live Status</div>
-            </div>
-        </div>
-        
-        <div class="flex-1 flex flex-col justify-center items-center text-center relative z-10">
-            <h2 class="text-7xl font-black tracking-tighter leading-tight mb-8">
-                The First Truly <span class="accent-text italic">Autonomous</span><br/>Vault on Kite AI.
-            </h2>
-            <p class="text-gray-500 text-lg font-medium max-w-2xl leading-relaxed">
-                AllocAI bridges the gap between AI market intelligence and on-chain execution, ensuring your capital is always working in the highest-yield pools.
-            </p>
-        </div>
-    </section>
+  <div class="deck-toolbar">
+    <button id="downloadPdfBtn" class="download-btn" type="button">Download as PDF</button>
+  </div>
 
-    <!-- SLIDE 2: THE INTELLIGENCE (OVERSCAN) -->
-    <section class="slide">
-        <div class="mb-12">
-            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-2">Core Technology</p>
-            <h2 class="text-4xl font-black tracking-tighter">High-Frequency Intelligence</h2>
-        </div>
+  <main class="deck-shell">
 
-        <div class="grid grid-cols-2 gap-8 items-center flex-1">
-            <div class="glass-card p-10 h-full flex flex-col justify-center">
-                <h3 class="text-3xl font-black mb-6 italic">"The Agent never sleeps."</h3>
-                <p class="text-gray-400 leading-relaxed font-medium">
-                    AllocAI runs an autonomous agent every few minutes that meticulously scans yield variations across the entire ecosystem. 
-                    <br/><br/>
-                    It identifies the <span class="accent-text font-black">safest and most profitable</span> routes before users even realize a yield spike has occurred.
-                </p>
-            </div>
-            <div class="space-y-6">
-                <div class="glass-card p-8 border-emerald-500/20">
-                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Omnichain Bridge</p>
-                    <p class="text-xl font-black text-emerald-400">LayerZero v2 Orchestration</p>
-                </div>
-                <div class="glass-card p-8">
-                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Execution Speed</p>
-                    <p class="text-xl font-black">Zero-Latency Reallocation</p>
-                </div>
-            </div>
+  <!-- Slide 1 -->
+  <section class="slide">
+    <div class="glow" style="top:-220px; right:-140px;"></div>
+    <div class="relative z-10">
+      <div class="flex items-center justify-between mb-12">
+        <h1 class="text-6xl font-black tracking-tight">Alloc<span class="accent">AI</span></h1>
+        <div class="flex gap-3">
+          <span class="pill">Kite Native</span>
+          <span class="pill">Live Product</span>
         </div>
-    </section>
+      </div>
+      <h2 class="text-5xl font-black leading-tight max-w-4xl">
+        KITE-first AI yield recommendations with <span class="accent">on-chain proof</span> and wallet-level run history.
+      </h2>
+      <p class="mt-6 text-lg text-gray-300 max-w-4xl leading-relaxed">
+        AllocAI helps users discover live USDC opportunities, pay a fixed fee to run the strategy agent,
+        and receive a verifiable result with explorer links.
+      </p>
+      <div class="mt-10 panel p-6 max-w-4xl">
+        <p class="text-sm font-semibold text-gray-200">
+          One-line value proposition: <span class="accent font-bold">"Pay once, get strategy + proof + actionable links."</span>
+        </p>
+      </div>
+    </div>
+  </section>
 
-    <!-- SLIDE 3: DATA VISUALIZATION (STATS CLONE) -->
-    <section class="slide">
-        <div class="mb-12">
-            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-2">Portfolio View</p>
-            <h2 class="text-4xl font-black tracking-tighter">Real-Time Precision</h2>
+  <!-- Slide 2 -->
+  <section class="slide">
+    <div class="glow" style="bottom:-240px; left:-160px;"></div>
+    <div class="relative z-10">
+      <p class="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3">Problem</p>
+      <h2 class="text-4xl font-black mb-10">What users struggle with today</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="panel p-7">
+          <p class="text-xl font-bold mb-3">Too many yield options</p>
+          <p class="text-gray-300 leading-relaxed">Users cannot easily choose which protocol/chain has the best stablecoin opportunity at a given time.</p>
         </div>
+        <div class="panel p-7">
+          <p class="text-xl font-bold mb-3">No trust in black-box advice</p>
+          <p class="text-gray-300 leading-relaxed">Recommendations without payment and proof tracking are hard to trust and hard to audit.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-xl font-bold mb-3">Execution friction</p>
+          <p class="text-gray-300 leading-relaxed">Users need direct links to execute strategy quickly, not generic descriptions.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-xl font-bold mb-3">No continuity</p>
+          <p class="text-gray-300 leading-relaxed">After refresh/device change, users lose context if run history is not stored on backend.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="grid grid-cols-3 gap-6 mb-12">
-            <div class="glass-card p-10">
-                <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">My Position</p>
-                <p className="text-4xl font-black tabular-nums">$1,240.<span class="text-emerald-400">4219</span></p>
-                <p class="text-[9px] font-black text-white/20 mt-4 uppercase">Principal + Growth</p>
-            </div>
-            <div class="glass-card p-10 border-[#B3A288]/30 bg-[#B3A288]/5">
-                <p class="text-[10px] font-black uppercase tracking-widest accent-text mb-4">Current APR</p>
-                <p class="text-4xl font-black tracking-tighter accent-text">5.85%</p>
-                <p class="text-[9px] font-black accent-text/40 mt-4 uppercase">Live Lucid Strategy</p>
-            </div>
-            <div class="glass-card p-10">
-                <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">Agent Status</p>
-                <p class="text-4xl font-black tracking-tighter">IDLE</p>
-                <p class="text-[9px] font-black text-white/20 mt-4 uppercase">Waiting for next scan</p>
-            </div>
-        </div>
+  <!-- Slide 3 -->
+  <section class="slide">
+    <div class="relative z-10">
+      <p class="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3">Solution</p>
+      <h2 class="text-4xl font-black mb-8">What AllocAI delivers now</h2>
+      <div class="panel p-8">
+        <ul class="space-y-4 text-lg">
+          <li><span class="accent font-bold">Live data:</span> Yield table from DeFiLlama with up to 2 best USDC opportunities per chain.</li>
+          <li><span class="accent font-bold">Paid run:</span> Fixed `0.25 KITE` flow in "Run The Agent" modal.</li>
+          <li><span class="accent font-bold">Two payment modes:</span> direct wallet KITE payment + <span class="emph">AGENTIC x402 PAYMENTS</span> via Passport.</li>
+          <li><span class="accent font-bold">Kite integrations:</span> Lucid Bridge + Swap Aggregator + cross-chain USDC balance monitor.</li>
+          <li><span class="accent font-bold">Rich strategy output:</span> recommendation, APR, execution steps, and 2Y/3Y/5Y compounding estimates.</li>
+          <li><span class="accent font-bold">Proof:</span> on-chain proof tx hash shown to user with explorer link.</li>
+          <li><span class="accent font-bold">History:</span> latest 5 runs per wallet, including status, tx links, and block metadata.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-        <div class="glass-card flex-1 p-10 flex flex-col justify-center">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-                <p class="text-xs font-black uppercase tracking-widest">On-Chain Reasoning Verified</p>
-            </div>
-            <p class="text-gray-400 text-lg leading-relaxed max-w-3xl">
-                Every movement made by the agent is backed by an on-chain proof. Users can audit the exact reason why funds were moved, ensuring total transparency of the AI reasoning process.
-            </p>
+  <!-- Slide 4 -->
+  <section class="slide">
+    <div class="relative z-10">
+      <p class="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3">Why Kite</p>
+      <h2 class="text-4xl font-black mb-8">Why this is built on Kite AI</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">Identity + agent payments</p>
+          <p class="text-gray-200">Kite enables agent-native payment rails and identity-aware flows, including <span class="emph">AGENTIC x402 PAYMENTS</span>.</p>
         </div>
-    </section>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">Verification on Kite</p>
+          <p class="text-gray-200">Every strategy run is anchored with on-chain proof and explorer-verifiable records for auditability.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">Kite ecosystem integrations</p>
+          <p class="text-gray-200">Lucid Bridge integration, swap aggregator integration, and cross-chain USDC balance monitoring are all surfaced in one product.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">Production-ready demo UX</p>
+          <p class="text-gray-200">Live endpoints, payment flows, policy-constrained decisions, KPI telemetry, and autonomous scheduler checks are all demoable end-to-end.</p>
+        </div>
+      </div>
+      <div class="panel p-6 mt-6">
+        <p class="text-sm text-gray-300">
+          KPI snapshot in app: total runs, proofs posted, avg response time, success rate.
+        </p>
+      </div>
+    </div>
+  </section>
 
-    <!-- SLIDE 4: THE FUTURE -->
-    <section class="slide">
-        <div class="flex-1 flex flex-col justify-center items-center text-center">
-            <h2 class="text-6xl font-black tracking-tighter mb-12 italic">
-               The first <span class="accent-text">Self-Optimizing</span> financial infrastructure on Kite AI.
-            </h2>
-            <div class="flex gap-4 mb-20">
-                <span class="pill">Gasless Trading</span>
-                <span class="pill">Omnichain Flows</span>
-                <span class="pill">AI Governance</span>
-            </div>
-            <div class="h-1 w-24 bg-[#B3A288]/20"></div>
-            <p class="mt-8 text-[10px] font-black uppercase tracking-[0.5em] text-gray-500">AllocAI Protocol | Mid-Checkpoint 2026</p>
+  <!-- Slide 5 -->
+  <section class="slide">
+    <div class="relative z-10">
+      <p class="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3">Current Scope</p>
+      <h2 class="text-4xl font-black mb-8">What is implemented and verifiable</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">Frontend</p>
+          <ul class="text-gray-200 space-y-2">
+            <li>- Yield dashboard with lock/unlock behavior</li>
+            <li>- Swap/Bridge panel UX</li>
+            <li>- Paid agent modal with pre-flight checks</li>
+            <li>- Decision panel with protocol and DeFiLlama links</li>
+            <li>- Latest runs panel (5 runs)</li>
+          </ul>
         </div>
-    </section>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">Backend APIs</p>
+          <ul class="text-gray-200 space-y-2">
+            <li>- `GET /api/yield`</li>
+            <li>- `POST /api/paid-data` (402 + direct mode)</li>
+            <li>- `GET /api/strategy/latest` (by address/runId)</li>
+            <li>- `GET /api/usdc-balances`</li>
+            <li>- `POST /api/autonomous/tick` + `GET /api/autonomous/status`</li>
+            <li>- `GET /api/kpi` + on-chain receipt confirmation enrichment</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel p-6 mt-6">
+        <p class="text-sm text-gray-300">
+          Note: This presentation reflects the working hackathon MVP in this repository, not earlier contract-centric concepts.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide">
+    <div class="relative z-10">
+      <p class="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3">Function-by-Function Flow</p>
+      <h2 class="text-4xl font-black mb-8">How the product works under the hood</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">1) Yield discovery</p>
+          <p class="text-gray-200">`GET /api/yield` pulls DeFiLlama pools, filters USDC stable pools, ranks by TVL/APY, returns up to 2 per chain.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">2) Paid execution</p>
+          <p class="text-gray-200">`POST /api/paid-data` supports direct wallet payment and <span class="emph">AGENTIC x402 PAYMENTS</span> with 402 challenge/settlement.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">3) Lucid Bridge + swap aggregator</p>
+          <p class="text-gray-200">Integrated bridge and swap modules let users move and convert assets in-app across KITE-centered routes.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">4) USDC balances + proof history</p>
+          <p class="text-gray-200">Cross-chain USDC balance endpoint and proof-aware run history show what the wallet has and what the agent executed.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">5) Autonomous scheduler</p>
+          <p class="text-gray-200">VPS-triggered generic autonomous profile runs on cadence with secure tick secret and independent proof trail.</p>
+        </div>
+        <div class="panel p-7">
+          <p class="text-lg font-extrabold mb-3 accent">6) Guardrails + KPIs</p>
+          <p class="text-gray-200">Policy constraints (slippage/allocation/TVL/confidence/cooldown) plus KPI API for success-rate and latency visibility.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7 -->
+  <section class="slide">
+    <div class="relative z-10">
+      <p class="text-xs uppercase tracking-[0.25em] text-gray-400 mb-3">Live Demo Guide</p>
+      <h2 class="text-4xl font-black mb-8">How judges can validate in 3 minutes</h2>
+      <div class="panel p-8">
+        <ol class="space-y-4 text-lg">
+          <li><span class="accent font-bold">1)</span> Connect wallet and open dashboard.</li>
+          <li><span class="accent font-bold">2)</span> Show Lucid Bridge integration and destination chain routing.</li>
+          <li><span class="accent font-bold">3)</span> Show swap aggregator module (KITE/WKITE/USDC).</li>
+          <li><span class="accent font-bold">4)</span> Show multi-chain USDC balances panel.</li>
+          <li><span class="accent font-bold">5)</span> Open "Run The Agent" and run paid strategy with direct or x402 mode.</li>
+          <li><span class="accent font-bold">6)</span> Show autonomous scheduler box and trigger a scheduler check (if enabled in demo).</li>
+          <li><span class="accent font-bold">7)</span> Show proof hash + latest runs explorer links + block metadata + KPI snapshot.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8 -->
+  <section class="slide">
+    <div class="glow" style="bottom:-220px; right:-180px;"></div>
+    <div class="relative z-10 flex h-full flex-col justify-center items-center text-center">
+      <h2 class="text-6xl font-black leading-tight mb-6">
+        Transparent AI yield recommendations,<br>
+        <span class="accent">paid and verifiable.</span>
+      </h2>
+      <p class="text-gray-300 text-xl max-w-3xl">
+        AllocAI focuses on practical trust: users pay, receive clear strategy, and verify every run on-chain.
+      </p>
+      <div class="mt-12 flex gap-3 flex-wrap justify-center">
+        <span class="pill">Kite Native</span>
+        <span class="pill">Live Data</span>
+        <span class="pill">Lucid Bridge</span>
+        <span class="pill">Swap Aggregator</span>
+        <span class="pill">USDC Multichain Balances</span>
+        <span class="pill">Agentic x402 Payments</span>
+        <span class="pill">On-Chain Proof</span>
+        <span class="pill">Run History</span>
+      </div>
+      <p class="mt-10 text-xs uppercase tracking-[0.3em] text-gray-500">AllocAI | Kite Hackathon MVP</p>
+    </div>
+  </section>
+
+  </main>
+
+  <script>
+    const downloadBtn = document.getElementById("downloadPdfBtn");
+    if (downloadBtn) {
+      downloadBtn.addEventListener("click", () => {
+        window.print();
+      });
+    }
+  </script>
 </body>
 </html>

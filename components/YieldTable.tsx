@@ -6,9 +6,10 @@ import { YieldOpportunity } from "@/lib/types";
 interface Props {
   opportunities: YieldOpportunity[];
   loading: boolean;
+  unlocked?: boolean;
 }
 
-const YieldTable: React.FC<Props> = ({ opportunities, loading }) => {
+const YieldTable: React.FC<Props> = ({ opportunities, loading, unlocked = true }) => {
   // Helper to format large numbers
   const formatTVL = (num: number) => {
     if (num >= 1e9) return `$${(num / 1e9).toFixed(1)}B`;
@@ -21,16 +22,21 @@ const YieldTable: React.FC<Props> = ({ opportunities, loading }) => {
      if (c.includes('ethereum')) return 'bg-indigo-500';
      if (c.includes('base')) return 'bg-cyan-400';
      if (c.includes('arbitrum')) return 'bg-blue-600';
+     if (c.includes('avalanche')) return 'bg-rose-500';
      if (c.includes('optimism')) return 'bg-red-500';
      if (c.includes('polygon')) return 'bg-purple-500';
      return 'bg-gray-500';
   }
 
+  const getProtocolBadge = (protocol: string) => {
+    return protocol.toUpperCase();
+  };
+
   if (loading && opportunities.length === 0) {
     return (
       <div className="p-12 flex flex-col items-center justify-center space-y-6">
         <div className="w-16 h-16 border-b-2 border-[#B3A288] rounded-full animate-spin"></div>
-        <p className="text-[10px] font-black uppercase text-gray-500 tracking-[0.3em] animate-pulse">Scanning Global Yields...</p>
+        <p className="text-[10px] font-black uppercase text-gray-500 tracking-[0.3em] animate-pulse">Monitoring USDC Yield Routes...</p>
       </div>
     );
   }
@@ -49,8 +55,14 @@ const YieldTable: React.FC<Props> = ({ opportunities, loading }) => {
           </tr>
         </thead>
         <tbody className="text-sm font-black divide-y divide-white/5">
-          {opportunities.map((opp, idx) => (
-            <tr key={`${opp.chain}-${opp.protocol}-${idx}`} className="group hover:bg-white/[0.04] transition-all border-white/5">
+          {opportunities.map((opp, idx) => {
+            const teaserVisibleIndex = Math.min(3, Math.max(0, opportunities.length - 1));
+            const isUnlockedRow = unlocked || idx === teaserVisibleIndex;
+            return (
+            <tr
+              key={`${opp.chain}-${opp.protocol}-${idx}`}
+              className={`group hover:bg-white/[0.04] transition-all border-white/5 ${!isUnlockedRow ? "blur-[4px] opacity-20" : ""}`}
+            >
               <td className="px-8 py-5">
                  <div className="flex items-center space-x-3">
                     <div className={`w-1.5 h-1.5 rounded-full ${getChainColor(opp.chain)} shadow-lg shadow-current/50`} />
@@ -58,37 +70,9 @@ const YieldTable: React.FC<Props> = ({ opportunities, loading }) => {
                  </div>
               </td>
               <td className="px-8 py-5">
-                 <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                       <img 
-                          src={
-                            opp.protocol?.toLowerCase().includes('lucid') ? '/logo-v2.png' :
-                            opp.protocol?.toLowerCase().includes('aave') ? 'https://icons.llama.fi/aave-v3.png' :
-                            opp.protocol?.toLowerCase().includes('compound') ? 'https://icons.llama.fi/compound.png' :
-                            opp.protocol?.toLowerCase().includes('sky') ? 'https://icons.llama.fi/sky.jpg' :
-                            opp.protocol?.toLowerCase().includes('maker') ? 'https://icons.llama.fi/maker.jpg' :
-                            opp.protocol?.toLowerCase().includes('morpho') ? 'https://icons.llama.fi/morpho.jpg' :
-                            opp.protocol?.toLowerCase().includes('angle') ? 'https://icons.llama.fi/angle.png' :
-                            opp.protocol?.toLowerCase().includes('ethena') ? 'https://icons.llama.fi/ethena.png' :
-                            `https://icons.llama.fi/${opp.protocol?.toLowerCase().replace(/ /g, '-')}.png`
-                          } 
-                          alt={opp.protocol} 
-                          className="w-full h-full object-cover rounded-full"
-                          onError={(e) => {
-                             const target = e.target as HTMLImageElement;
-                             if (target.src.endsWith('.png')) {
-                                target.src = target.src.replace('.png', '.jpg');
-                             } else {
-                                target.src = 'https://icons.llama.fi/usd-coin.jpg';
-                                target.style.opacity = '0.3';
-                             }
-                          }}
-                       />
-                    </div>
-                    <span className="text-[10px] font-black uppercase text-gray-400 group-hover:text-white transition-colors">
-                      {opp.protocol}
-                    </span>
-                 </div>
+                 <span className="inline-flex items-center text-[8px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded bg-blue-500/10 text-blue-200 border border-blue-500/20">
+                   {getProtocolBadge(opp.protocol)}
+                 </span>
               </td>
               <td className="px-8 py-5">
                  <div className="flex items-center space-x-2">
@@ -132,9 +116,16 @@ const YieldTable: React.FC<Props> = ({ opportunities, loading }) => {
                  </span>
               </td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
+      {!unlocked && (
+        <div className="sticky bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur border-t border-white/10 text-center">
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#B3A288]">
+            Unlock full table with paid agent run
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,9 +5,43 @@ export interface YieldOpportunity {
   apr: number;
   risk: "low" | "medium" | "high";
   liquidity: number;
+  strategyUrl?: string;
+  defillamaProject?: string;
+  defillamaUrl?: string;
 }
 
 export type AgentAction = "hold" | "move" | "buy_data";
+
+export interface CompoundProjection {
+  years: number;
+  projectedValueUsdc: number;
+  projectedYieldUsdc: number;
+}
+
+export interface StrategyNarrative {
+  headline: string;
+  recommendation: string;
+  expectedMonthlyUsdc: number;
+  expectedAnnualUsdc: number;
+  apr: number;
+  reinvestCadence: string;
+  riskNotes: string[];
+  executionSteps: string[];
+  compoundedProjections: CompoundProjection[];
+}
+
+export interface AgentProofReceipt {
+  runId: string;
+  paymentReference: string;
+  settlementReference: string;
+  strategyHash: string;
+  txHash: string;
+  summaryTxHash?: string;
+  summaryExcerpt?: string;
+  timestamp: string;
+  signer: string;
+  signature: string;
+}
 
 export interface AgentDecision {
   action: AgentAction;
@@ -16,14 +50,21 @@ export interface AgentDecision {
   reason: string;
   confidence: number;
   selectedOpportunity?: YieldOpportunity;
+  strategyProtocolUrl?: string;
+  strategyDefiLlamaUrl?: string;
   paidDataUsed: boolean;
+  strategy?: StrategyNarrative;
+  proofReceipt?: AgentProofReceipt;
+  paymentStatus?: "pending" | "settled";
+  runId?: string;
+  strategyLink?: string;
 }
 
 export interface TimelineEvent {
   id: string;
   timestamp: string;
   message: string;
-  type: "scan" | "purchase" | "decision" | "on-chain";
+  type: "scan" | "purchase" | "decision" | "on-chain" | "payment" | "proof";
 }
 
 export const MOCK_YIELDS: YieldOpportunity[] = [

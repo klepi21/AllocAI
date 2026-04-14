@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { ethers, BrowserProvider, JsonRpcSigner } from "ethers";
-import { CURRENT_NETWORK } from "@/lib/networks";
+import { CURRENT_NETWORK, CURRENT_NETWORK_KEY, KITE_NETWORKS } from "@/lib/networks";
 
-export const useKiteWallet = () => {
+export const useKiteWallet = (networkName: "mainnet" | "testnet" = CURRENT_NETWORK_KEY) => {
+  const DISCONNECT_LOCK_KEY = "allocai_wallet_disconnect_lock";
   const [address, setAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,9 +13,14 @@ export const useKiteWallet = () => {
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
   const [mounted, setMounted] = useState<boolean>(false);
+  const [disconnectLocked, setDisconnectLocked] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== "undefined") {
+      const locked = window.localStorage.getItem(DISCONNECT_LOCK_KEY) === "1";
+      setDisconnectLocked(locked);
+    }
   }, []);
 
   const connect = useCallback(async (forceSelection: boolean = true) => {
@@ -25,6 +31,10 @@ export const useKiteWallet = () => {
 
     setLoading(true);
     setError(null);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(DISCONNECT_LOCK_KEY);
+    }
+    setDisconnectLocked(false);
 
     try {
       let ethProvider = window.ethereum;
@@ -33,6 +43,8 @@ export const useKiteWallet = () => {
         ethProvider = window.ethereum.providers.find((p: any) => p.isMetaMask) || window.ethereum.providers[0];
       }
 
+      const targetNetwork = KITE_NETWORKS[networkName] || CURRENT_NETWORK;
+      
       const browserProvider = new BrowserProvider(ethProvider);
       
       if (forceSelection) {
@@ -46,25 +58,25 @@ export const useKiteWallet = () => {
       const chainIdHex = await browserProvider.send("eth_chainId", []);
       const chainId = parseInt(chainIdHex, 16);
 
-      if (chainId !== CURRENT_NETWORK.chainId) {
+      if (chainId !== targetNetwork.chainId) {
         try {
           await browserProvider.send("wallet_switchEthereumChain", [
-            { chainId: `0x${CURRENT_NETWORK.chainId.toString(16)}` },
+            { chainId: `0x${targetNetwork.chainId.toString(16)}` },
           ]);
         } catch (switchError: any) {
           if (switchError.code === 4902) {
             try {
               await browserProvider.send("wallet_addEthereumChain", [
                 {
-                  chainId: `0x${CURRENT_NETWORK.chainId.toString(16)}`,
-                  chainName: CURRENT_NETWORK.name,
-                  rpcUrls: [CURRENT_NETWORK.rpcUrl],
+                  chainId: `0x${targetNetwork.chainId.toString(16)}`,
+                  chainName: targetNetwork.name,
                   nativeCurrency: {
-                    name: CURRENT_NETWORK.currency,
-                    symbol: CURRENT_NETWORK.currency,
+                    name: targetNetwork.currency,
+                    symbol: targetNetwork.currency,
                     decimals: 18,
                   },
-                  blockExplorerUrls: [CURRENT_NETWORK.explorerUrl],
+                  rpcUrls: [targetNetwork.rpcUrl],
+                  blockExplorerUrls: [targetNetwork.explorerUrl],
                 },
               ]);
             } catch (addError) {
@@ -88,14 +100,19 @@ export const useKiteWallet = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [DISCONNECT_LOCK_KEY, networkName]);
 
   const disconnect = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(DISCONNECT_LOCK_KEY, "1");
+    }
+    setDisconnectLocked(true);
     setAddress(null);
     setBalance(null);
     setSigner(null);
     setProvider(null);
-  }, []);
+    setError(null);
+  }, [DISCONNECT_LOCK_KEY]);
 
   const refreshBalance = useCallback(async () => {
     if (typeof window === "undefined" || !window.ethereum || !address) return;
@@ -128,7 +145,7 @@ export const useKiteWallet = () => {
 
   // Eager Connection
   useEffect(() => {
-    if (mounted && !address && typeof window !== "undefined" && window.ethereum) {
+    if (mounted && !address && !disconnectLocked && typeof window !== "undefined" && window.ethereum) {
       window.ethereum.request({ method: "eth_accounts" })
         .then((accounts: string[]) => {
           if (accounts.length > 0) {
@@ -137,11 +154,19 @@ export const useKiteWallet = () => {
         })
         .catch(console.error);
     }
-  }, [mounted, address, connect]);
+  }, [mounted, address, disconnectLocked, connect]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.ethereum) {
       const handleAccountsChanged = (accounts: string[]) => {
+        const locked = typeof window !== "undefined" && window.localStorage.getItem(DISCONNECT_LOCK_KEY) === "1";
+        if (locked) {
+          setAddress(null);
+          setBalance(null);
+          setSigner(null);
+          setProvider(null);
+          return;
+        }
         if (accounts.length > 0) {
           setAddress(accounts[0]);
           refreshBalance();
@@ -154,7 +179,7 @@ export const useKiteWallet = () => {
         window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
       };
     }
-  }, [disconnect, refreshBalance]);
+  }, [disconnect, refreshBalance, DISCONNECT_LOCK_KEY]);
 
   return { address, balance, loading, error, provider, signer, connect, disconnect, refreshBalance };
 };

@@ -23,5 +23,10 @@ export const KITE_NETWORKS: Record<string, NetworkConfig> = {
   },
 };
 
-// Toggle manually between 'testnet' and 'mainnet'
-export const CURRENT_NETWORK = KITE_NETWORKS.mainnet;
+const envNetwork = process.env.NEXT_PUBLIC_KITE_NETWORK?.toLowerCase();
+const envRpc = process.env.NEXT_PUBLIC_KITE_RPC?.toLowerCase() || "";
+
+export const CURRENT_NETWORK_KEY: "mainnet" | "testnet" =
+  envNetwork === "testnet" || envRpc.includes("testnet") ? "testnet" : "mainnet";
+
+export const CURRENT_NETWORK = KITE_NETWORKS[CURRENT_NETWORK_KEY];

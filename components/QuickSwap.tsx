@@ -68,9 +68,11 @@ const ERC20_ABI = [
 interface QuickSwapProps {
   signer: any;
   address: string;
+  onToggleMode?: () => void;
+  toggleLabel?: string;
 }
 
-export default function QuickSwap({ signer, address }: QuickSwapProps) {
+export default function QuickSwap({ signer, address, onToggleMode, toggleLabel }: QuickSwapProps) {
   const TOKENS = [
     { symbol: "KITE", address: "NATIVE", decimals: 18 },
     { symbol: "WKITE", address: WKITE_ADDRESS, decimals: 18 },
@@ -92,18 +94,19 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
     if (!signer || !address) return;
     
     const nonce = ethers.hexlify(ethers.randomBytes(32));
-    const validAfter = 0;
-    const validBefore = Math.floor(Date.now() / 1000) + 3600;
+    const now = Math.floor(Date.now() / 1000);
+    const validAfter = now - 1;
+    const validBefore = now + 25;
 
     const domain = {
-        name: "USD Coin",
+        name: "Bridged USDC (Kite AI)",
         version: "2",
         chainId: 2366,
         verifyingContract: USDC_ADDRESS
     };
 
     const types = {
-        ReceiveWithAuthorization: [
+        TransferWithAuthorization: [
             { name: "from", type: "address" },
             { name: "to", type: "address" },
             { name: "value", type: "uint256" },
@@ -140,7 +143,9 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
     const fetchBalance = async () => {
       if (!address || !fromToken) return;
       try {
-        const provider = new ethers.JsonRpcProvider("https://rpc.gokite.ai/");
+        const provider = new ethers.JsonRpcProvider(
+          process.env.NEXT_PUBLIC_KITE_RPC || "https://rpc.gokite.ai/"
+        );
         if (fromToken.address === "NATIVE") {
           const bal = await provider.getBalance(address);
           setFromBalance(Number(ethers.formatEther(bal)).toFixed(4));
@@ -205,11 +210,23 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
 
       // STANDARD PATH (Fallback)
       const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+
+      // Handle wrapping
       if (fromToken.symbol === "KITE" && toToken.symbol === "WKITE") {
         const wkite = new ethers.Contract(WKITE_ADDRESS, ["function deposit() payable"], signer);
         const tx = await wkite.deposit({ value: amountInWei });
         await tx.wait();
         toast.success("WRAP SUCCESSFUL");
+        setAmountIn("");
+        return;
+      }
+
+      // Handle unwrapping
+      if (fromToken.symbol === "WKITE" && toToken.address === "NATIVE") {
+        const wkite = new ethers.Contract(WKITE_ADDRESS, ["function withdraw(uint256)"], signer);
+        const tx = await wkite.withdraw(amountInWei);
+        await tx.wait();
+        toast.success("UNWRAP SUCCESSFUL");
         setAmountIn("");
         return;
       }
@@ -223,23 +240,29 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
         }
       }
 
-      const iface = new ethers.Interface(ROUTER_ABI);
-      const calls = [];
       const params = {
         tokenIn: fromToken.address === "NATIVE" ? WKITE_ADDRESS : fromToken.address,
         tokenOut: toToken.address === "NATIVE" ? WKITE_ADDRESS : toToken.address,
         deployer: "0x0000000000000000000000000000000000000000",
-        recipient: toToken.address === "NATIVE" ? ROUTER_ADDRESS : address,
+        recipient: toToken.address === "NATIVE" ? ROUTER_ADDRESS : address, // If native, recipient is router for unwrapping
         deadline: deadline,
         amountIn: amountInWei,
         amountOutMinimum: 0,
         limitSqrtPrice: 0
       };
+      
+      const iface = new ethers.Interface(ROUTER_ABI);
+      const calls = [];
       calls.push(iface.encodeFunctionData("exactInputSingle", [params]));
-      if (toToken.address === "NATIVE") calls.push(iface.encodeFunctionData("unwrapWNativeToken", [0, address]));
+      if (toToken.address === "NATIVE") {
+        calls.push(iface.encodeFunctionData("unwrapWNativeToken", [0, address]));
+      }
 
       const router = new ethers.Contract(ROUTER_ADDRESS, ROUTER_ABI, signer);
-      const tx = await router.multicall(calls, { value: fromToken.address === "NATIVE" ? amountInWei : 0, gasLimit: 800000 });
+      const tx = await router.multicall(calls, { 
+        value: fromToken.address === "NATIVE" ? amountInWei : 0, 
+        gasLimit: 800000 
+      });
       await tx.wait();
       toast.success("SWAP SUCCESSFUL");
       setAmountIn("");
@@ -253,9 +276,20 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
   };
 
   return (
-    <div className="glass-card rounded-[2rem] border-white/5 bg-white/[0.01] p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Quick Swap</h2>
+    <div className="glass-card rounded-[2rem] border-white/5 bg-[#151515] p-4 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">Quick Swap</h2>
+          {onToggleMode && toggleLabel && (
+            <button
+              type="button"
+              onClick={onToggleMode}
+              className="text-[8px] font-black uppercase tracking-widest text-[#B3A288] hover:text-white transition-colors"
+            >
+              {toggleLabel}
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-4">
            {fromToken.symbol === "USDC" && (
              <button 
@@ -272,20 +306,20 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
         </div>
       </div>
 
-      <div className="space-y-4 flex-1">
+      <div className="space-y-3 flex-1">
         {/* INPUT */}
-        <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <div className="bg-[#080808] rounded-2xl p-3 border border-white/10">
           <div className="flex justify-between items-center mb-2">
             <span className="text-[8px] font-black uppercase text-gray-500 tracking-widest">From</span>
             <span className="text-[8px] font-black uppercase text-gray-400">Balance: {fromBalance}</span>
           </div>
           <div className="flex items-center gap-4">
-            <input 
+            <input
               type="number"
               value={amountIn}
               onChange={(e) => setAmountIn(e.target.value)}
-              placeholder="0.0"
-              className="bg-transparent text-xl font-black text-white focus:outline-none w-full"
+              placeholder="Amount"
+              className="w-full bg-[#080808] border border-white/10 rounded-xl px-3 py-2.5 text-lg font-black text-white focus:outline-none focus:border-[#B3A288]/40 placeholder:text-[9px] placeholder:text-gray-500"
             />
             <div className="relative">
               <button 
@@ -317,12 +351,12 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
         </div>
 
         {/* OUTPUT */}
-        <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <div className="bg-[#080808] rounded-2xl p-3 border border-white/10">
           <div className="flex justify-between items-center mb-2">
             <span className="text-[8px] font-black uppercase text-gray-500 tracking-widest">To (Estimated)</span>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-xl font-black text-white/40 w-full">{amountOut}</p>
+            <p className="w-full bg-[#080808] border border-white/10 rounded-xl px-3 py-2.5 text-lg font-black text-white/70">{amountOut}</p>
             <div className="relative">
               <button 
                 onClick={() => setShowToSelect(!showToSelect)}
@@ -343,10 +377,10 @@ export default function QuickSwap({ signer, address }: QuickSwapProps) {
         </div>
       </div>
 
-      <button 
+      <button
         onClick={executeSwap}
         disabled={swapping || !amountIn || fromToken.symbol === toToken.symbol}
-        className="w-full mt-6 py-4 rounded-2xl bg-[#B3A288] text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-[#B3A288]/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:hover:scale-100"
+        className="w-full mt-4 py-3 rounded-2xl bg-[#B3A288] text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-[#B3A288]/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-30 disabled:hover:scale-100"
       >
         {swapping ? "Executing..." : fromToken.symbol === toToken.symbol ? "Invalid Pair" : "Execute Swap"}
       </button>

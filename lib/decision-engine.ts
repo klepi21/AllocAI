@@ -5,12 +5,14 @@ export const determineDecision = (
   currentApr: number = 5.0,
   tvl: number = 0,
   sourceChain: string = "Kite AI",
-  paidDataUsed: boolean = false
+  paidDataUsed: boolean = false,
+  riskMode: "standard" | "aggressive" = "standard"
 ): AgentDecision => {
   // Filter for allowed risk levels
-  const safeOpportunities = opportunities.filter(
-    (opp) => opp.risk === "low" || opp.risk === "medium"
-  );
+  const safeOpportunities =
+    riskMode === "aggressive"
+      ? opportunities
+      : opportunities.filter((opp) => opp.risk === "low" || opp.risk === "medium");
 
   // Sort by APR descending
   const sorted = [...safeOpportunities].sort((a, b) => b.apr - a.apr);
@@ -46,9 +48,10 @@ export const determineDecision = (
   const netProfit = projectedExtraProfit - totalEstimatedCost;
   
   // Success Metric: If net profit is positive and covers the move cost at least 3x
-  const isWorthIt = !isCrossChain || netProfit > (totalEstimatedCost * 2);
+  const requiredProfitMultiple = riskMode === "aggressive" ? 1.25 : 2;
+  const isWorthIt = !isCrossChain || netProfit > totalEstimatedCost * requiredProfitMultiple;
 
-  const threshold = currentApr + 1.25; // Narrower threshold because of optimized fees
+  const threshold = currentApr + (riskMode === "aggressive" ? 0.6 : 1.25); // Aggressive mode reacts earlier
 
   if (best.apr > threshold && isWorthIt) {
     return {
