@@ -62,7 +62,7 @@ export function getProtocolStrategyUrl(protocol: string, chain: string): string 
   if (p.includes("curve")) return "https://curve.fi/";
   if (p.includes("uniswap")) return "https://app.uniswap.org/";
 
-  // Fallback to DeFiLlama protocol pages for unknown protocols.
-  if (p.length > 45) return null;
-  return getDefiLlamaProtocolUrl(p);
+  // Do not route protocol CTA to DeFiLlama fallback.
+  // If protocol mapping is unknown, hide protocol CTA instead.
+  return null;
 }
