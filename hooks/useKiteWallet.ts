@@ -86,6 +86,14 @@ export const useKiteWallet = (networkName: "mainnet" | "testnet" = CURRENT_NETWO
         }
       }
 
+      const finalChainIdHex = await browserProvider.send("eth_chainId", []);
+      const finalChainId = parseInt(finalChainIdHex, 16);
+      if (finalChainId !== targetNetwork.chainId) {
+        throw new Error(
+          `Wrong network connected. Please switch wallet to ${targetNetwork.name} (chain ${targetNetwork.chainId}).`
+        );
+      }
+
       const signerInstance = await browserProvider.getSigner();
       const accountsFinal = await browserProvider.send("eth_accounts", []);
       const balance = await browserProvider.getBalance(accountsFinal[0]);
