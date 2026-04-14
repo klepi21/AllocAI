@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ethers } from "ethers";
-import { getPaidRunById, getRecentPaidRunsByAddress } from "@/lib/run-store";
+import { getAllRuns, getPaidRunById, getRecentPaidRunsByAddress } from "@/lib/run-store";
 import { StoredPaidRun } from "@/lib/run-store";
 import { CURRENT_NETWORK } from "@/lib/networks";
 
@@ -81,10 +81,29 @@ export async function GET(req: Request) {
   if (!address || !ethers.isAddress(address)) {
     return NextResponse.json({ error: "Address or runId is required." }, { status: 400 });
   }
-  const runs = getRecentPaidRunsByAddress(address, limit);
+
+  let runs = getRecentPaidRunsByAddress(address, limit);
+
   if (!runs.length) {
-    return NextResponse.json({ error: "No strategy runs found for this wallet." }, { status: 404 });
+    const lower = address.toLowerCase();
+    const allCandidates = getAllRuns().filter((run) => (run.runType || "paid") === "paid");
+    const inferred: StoredPaidRun[] = [];
+    for (const run of allCandidates) {
+      if (!isTxHash(run.paymentReference)) continue;
+      const tx = await provider.getTransaction(run.paymentReference).catch(() => null);
+      if (tx?.from?.toLowerCase() === lower) inferred.push(run);
+      if (inferred.length >= limit) break;
+    }
+    runs = inferred;
   }
+
+  if (!runs.length) {
+    return NextResponse.json({
+      runs: [],
+      latest: null
+    });
+  }
+
   const enrichedRuns = await Promise.all(runs.map((item) => enrichRun(item)));
   return NextResponse.json({
     runs: enrichedRuns,
