@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AgentDecision } from "@/lib/types";
 import { CURRENT_NETWORK } from "@/lib/networks";
 import { getProtocolStrategyUrl } from "@/lib/protocol-links";
+import { mergeStrategyIfSparse } from "@/lib/recover-strategy-from-summary";
 
 interface Props {
   decision: AgentDecision | null;
@@ -80,12 +81,18 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
             : undefined
         }
       : null);
+
+  const displayStrategy = useMemo(() => {
+    if (!currentDisplay?.strategy) return null;
+    return mergeStrategyIfSparse(currentDisplay.strategy);
+  }, [currentDisplay]);
+
   const inferredProtocolUrl = currentDisplay
     ? getProtocolStrategyUrl(
         [
           currentDisplay.selectedOpportunity?.protocol || "",
-          currentDisplay.strategy?.headline || "",
-          currentDisplay.strategy?.recommendation || ""
+          displayStrategy?.headline || "",
+          displayStrategy?.recommendation || currentDisplay.strategy?.recommendation || ""
         ]
           .filter(Boolean)
           .join(" "),
@@ -127,30 +134,30 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
                 )}
              </div>
              <h2 className="text-3xl font-black mb-4 tracking-tight leading-tight">
-                {currentDisplay.strategy?.headline || `USDC Strategy: ${currentDisplay.selectedOpportunity?.protocol || "Current Route"}`}
+                {displayStrategy?.headline || `USDC Strategy: ${currentDisplay.selectedOpportunity?.protocol || "Current Route"}`}
              </h2>
              <p className="text-gray-200 text-[12px] font-bold max-w-3xl leading-relaxed tracking-wide mb-4">
-               {currentDisplay.strategy?.recommendation || currentDisplay.reason}
+               {displayStrategy?.recommendation || currentDisplay.strategy?.recommendation || currentDisplay.reason}
              </p>
-             {currentDisplay.strategy && (
+             {displayStrategy && (
                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl">
                  <div className="rounded-xl bg-[#080808] border border-white/10 p-3">
                    <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em]">APR</p>
-                   <p className="text-[16px] font-black text-[#B3A288] mt-1">{currentDisplay.strategy.apr.toFixed(2)}%</p>
+                   <p className="text-[16px] font-black text-[#B3A288] mt-1">{displayStrategy.apr.toFixed(2)}%</p>
                  </div>
                  <div className="rounded-xl bg-[#080808] border border-white/10 p-3">
                    <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em]">Monthly Yield (Est.)</p>
-                   <p className="text-[16px] font-black text-white mt-1">{currentDisplay.strategy.expectedMonthlyUsdc.toFixed(2)} USDC</p>
+                   <p className="text-[16px] font-black text-white mt-1">{displayStrategy.expectedMonthlyUsdc.toFixed(2)} USDC</p>
                  </div>
                  <div className="rounded-xl bg-[#080808] border border-white/10 p-3">
                    <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em]">Reinvest Cadence</p>
-                   <p className="text-[16px] font-black text-white mt-1">{currentDisplay.strategy.reinvestCadence}</p>
+                   <p className="text-[16px] font-black text-white mt-1">{displayStrategy.reinvestCadence}</p>
                  </div>
                </div>
              )}
-             {currentDisplay.strategy?.compoundedProjections?.length ? (
+             {displayStrategy?.compoundedProjections?.length ? (
                <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl">
-                 {currentDisplay.strategy.compoundedProjections.map((projection) => (
+                 {displayStrategy.compoundedProjections.map((projection) => (
                    <div key={projection.years} className="rounded-xl bg-[#080808] border border-white/10 p-3">
                      <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em]">
                        {projection.years}Y Compounding
@@ -165,9 +172,9 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
                  ))}
                </div>
              ) : null}
-             {currentDisplay.strategy?.executionSteps?.length ? (
+             {displayStrategy?.executionSteps?.length ? (
                <div className="mt-4 space-y-2 max-w-4xl">
-                 {currentDisplay.strategy.executionSteps.map((step, idx) => (
+                 {displayStrategy.executionSteps.map((step, idx) => (
                    <p key={`${step}-${idx}`} className="text-[10px] font-black tracking-wide text-gray-300">
                      {idx + 1}. {step}
                    </p>
@@ -221,7 +228,7 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
           <div className="flex flex-col items-center justify-center p-8 bg-[#080808] rounded-[2rem] border border-white/10 min-w-[180px] shadow-2xl backdrop-blur-3xl animate-in fade-in zoom-in slide-in-from-right-4">
              <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 text-center w-full">Impact</p>
              <p className="text-3xl font-black text-[#B3A288]">
-              {currentDisplay.strategy ? `${currentDisplay.strategy.expectedAnnualUsdc.toFixed(0)} USDC/yr` : "Stable"}
+              {displayStrategy ? `${displayStrategy.expectedAnnualUsdc.toFixed(0)} USDC/yr` : "Stable"}
              </p>
           </div>
         </div>

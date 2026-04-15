@@ -3,6 +3,11 @@ import { ethers } from "ethers";
 import { getAllRuns, getPaidRunById, getRecentPaidRunsByAddress } from "@/lib/run-store";
 import { StoredPaidRun } from "@/lib/run-store";
 import { CURRENT_NETWORK } from "@/lib/networks";
+import { getDefiLlamaProtocolUrl, getProtocolStrategyUrl } from "@/lib/protocol-links";
+import {
+  extractProtocolHintFromSummary,
+  recoverStrategyNarrativeFromSummary
+} from "@/lib/recover-strategy-from-summary";
 
 function isTxHash(value: string): boolean {
   return /^0x([A-Fa-f0-9]{64})$/.test(value);
@@ -130,6 +135,18 @@ function buildChainOnlyRuns(
       const runId = matchedSummary?.runId || tx.hash!;
       const strategyLink = `${origin}/?strategyRun=${runId}`;
       const summaryText = matchedSummary?.summary || "On-chain run reconstructed from Kite payment transaction.";
+      const strategy = recoverStrategyNarrativeFromSummary(summaryText);
+      const protocolHint = extractProtocolHintFromSummary(summaryText);
+      const chainHint = summaryText.toLowerCase().includes("arbitrum")
+        ? "Arbitrum"
+        : summaryText.toLowerCase().includes("optimism") || summaryText.toLowerCase().includes("op mainnet")
+          ? "Optimism"
+          : summaryText.toLowerCase().includes("base")
+            ? "Base"
+            : "Kite";
+      const strategyProtocolUrl =
+        getProtocolStrategyUrl(`${protocolHint} ${summaryText.slice(0, 200)}`, chainHint) || undefined;
+      const strategyDefiLlamaUrl = getDefiLlamaProtocolUrl(`${protocolHint} ${summaryText.slice(0, 120)}`) || undefined;
       return {
         runId,
         payerAddress: address,
@@ -166,21 +183,17 @@ function buildChainOnlyRuns(
           runId,
           paymentStatus: "settled",
           strategyLink,
-          strategy: {
-            headline: "Kite on-chain strategy run",
-            recommendation: summaryText,
-            expectedMonthlyUsdc: 0,
-            expectedAnnualUsdc: 0,
-            apr: 0,
-            reinvestCadence: "Monthly",
-            riskNotes: ["Recovered from chain history."],
-            executionSteps: ["Open protocol link and execute preferred allocation."],
-            compoundedProjections: [
-              { years: 2, projectedValueUsdc: 0, projectedYieldUsdc: 0 },
-              { years: 3, projectedValueUsdc: 0, projectedYieldUsdc: 0 },
-              { years: 5, projectedValueUsdc: 0, projectedYieldUsdc: 0 }
-            ]
+          strategyProtocolUrl,
+          strategyDefiLlamaUrl,
+          selectedOpportunity: {
+            chain: chainHint,
+            protocol: protocolHint,
+            asset: "USDC",
+            apr: strategy.apr,
+            risk: "low",
+            liquidity: 0
           },
+          strategy,
           proofReceipt: matchedSummary
             ? {
                 runId,
