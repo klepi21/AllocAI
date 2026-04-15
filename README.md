@@ -44,7 +44,7 @@ AllocAI is built to win on **demo depth**: users can open the live URL, connect 
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| `GET` | `/api/yield` | Ranked USDC opportunities |
+| `GET` | `/api/yield` | Ranked USDC opportunities (server masks rows until paid-unlock cookie or `?address=` with a fresh paid run in the store) |
 | `POST` | `/api/paid-data` | Paid strategy + proof (402 / x402 / direct) |
 | `GET` | `/api/strategy/latest?address=0x…&limit=5` | Wallet run history |
 | `GET` | `/api/strategy/latest?runId=…` | Single run |
@@ -119,6 +119,7 @@ Minimum for paid flow + proof:
 - `X402_MERCHANT_NAME`
 - `RUN_STORE_PATH` (recommended on VPS)
 - **KPI / Kitescan (Vercel):** `GET /api/kpi` merges the run file with **[Kitescan](https://kitescan.ai/api-docs?tab=rest_api)** when the store is empty (serverless has no disk). Set `DIRECT_KITE_FEE_WEI`, `X402_PAY_TO_ADDRESS`, `SERVICE_WALLET_PRIVATE_KEY` (for proof-wallet address), and optionally `KITESCAN_API_BASE_URL` + `KITESCAN_API_KEY` for reliable rate limits.
+- **`YIELD_UNLOCK_SECRET`** — long random string used to sign the httpOnly cookie that unlocks the full yield table for 10 minutes after a successful paid run. **Set this in production** (the repo default is dev-only).
 
 ## Run Locally
 

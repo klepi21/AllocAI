@@ -5,6 +5,7 @@ import { applyGuardrails, getGuardrailPolicy } from "@/lib/guardrails";
 import { generateStrategyNarrative } from "@/lib/strategy-llm";
 import { publishRunProofAndSignReceipt } from "@/lib/proof-receipt";
 import { savePaidRun, getLatestAutonomousRun } from "@/lib/run-store";
+import { getLiveYieldOpportunities } from "@/lib/yield-feed";
 import { YieldOpportunity } from "@/lib/types";
 import {
   AUTONOMOUS_BASELINE_APR,
@@ -41,13 +42,12 @@ export async function POST(req: Request) {
   }
 
   try {
-    const origin = new URL(req.url).origin;
-    const yieldRes = await fetch(`${origin}/api/yield`, { cache: "no-store" });
-    if (!yieldRes.ok) {
+    let opportunities: YieldOpportunity[];
+    try {
+      opportunities = await getLiveYieldOpportunities();
+    } catch {
       return NextResponse.json({ executed: false, error: "yield_feed_unavailable" }, { status: 502 });
     }
-    const yieldPayload = (await yieldRes.json()) as { opportunities?: YieldOpportunity[] };
-    const opportunities = Array.isArray(yieldPayload.opportunities) ? yieldPayload.opportunities : [];
     if (!opportunities.length) {
       return NextResponse.json({ executed: false, error: "no_opportunities" }, { status: 502 });
     }

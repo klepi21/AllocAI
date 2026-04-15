@@ -6,6 +6,8 @@ import { settleX402Payment } from "@/lib/facilitator";
 import { applyGuardrails, getGuardrailPolicy } from "@/lib/guardrails";
 import { publishRunProofAndSignReceipt } from "@/lib/proof-receipt";
 import { getProtocolStrategyUrl } from "@/lib/protocol-links";
+import { setYieldUnlockCookieOnResponse } from "@/lib/yield-table-access";
+import { getLiveYieldOpportunities } from "@/lib/yield-feed";
 import { savePaidRun } from "@/lib/run-store";
 import { generateStrategyNarrative } from "@/lib/strategy-llm";
 import { MOCK_YIELDS, YieldOpportunity } from "@/lib/types";
@@ -86,8 +88,20 @@ export async function POST(req: Request) {
   const parsedPayment = parseXPaymentHeader(paymentHeader);
   const resource = getResourceUrl(req);
   const body = (await req.json().catch(() => ({}))) as PaidDataRequest;
-  const opportunities = body.opportunities && body.opportunities.length ? body.opportunities : MOCK_YIELDS;
-  const currentApr = typeof body.currentApr === "number" ? body.currentApr : opportunities[0]?.apr || 0;
+  let opportunities: YieldOpportunity[] = MOCK_YIELDS;
+  try {
+    opportunities = await getLiveYieldOpportunities();
+  } catch {
+    if (body.opportunities && body.opportunities.length) {
+      opportunities = body.opportunities;
+    }
+  }
+  const sortedApr = [...opportunities].sort((a, b) => b.apr - a.apr);
+  const liveTopApr = sortedApr[0]?.apr || 0;
+  const currentApr =
+    typeof body.currentApr === "number" && Number.isFinite(body.currentApr) && body.currentApr > 0
+      ? body.currentApr
+      : liveTopApr;
   const tvl = typeof body.tvl === "number" && Number.isFinite(body.tvl) ? body.tvl : 0;
   const amountUsdc = typeof body.amountUsdc === "number" && Number.isFinite(body.amountUsdc) ? body.amountUsdc : tvl;
   const risk = body.risk === "medium" ? "medium" : "low";
@@ -243,7 +257,7 @@ export async function POST(req: Request) {
     responseTimeMs: Date.now() - startedAt
   });
 
-  return NextResponse.json({
+  const res = NextResponse.json({
     success: true,
     createdAt,
     payment: {
@@ -256,4 +270,6 @@ export async function POST(req: Request) {
     logs: runLogs,
     decision: decisionPayload
   });
+  setYieldUnlockCookieOnResponse(res);
+  return res;
 }

@@ -247,8 +247,14 @@ export default function Home() {
   const [autonomousStatus, setAutonomousStatus] = useState<AutonomousStatus | null>(null);
   const [countdownNowMs, setCountdownNowMs] = useState(Date.now());
 
-  const topApr = useMemo(() => opportunities[0]?.apr ?? 0, [opportunities]);
-  const topTvl = useMemo(() => opportunities[0]?.liquidity ?? 0, [opportunities]);
+  const topApr = useMemo(() => {
+    if (!opportunities.length) return 0;
+    return Math.max(...opportunities.map((o) => o.apr));
+  }, [opportunities]);
+  const topTvl = useMemo(() => {
+    if (!opportunities.length) return 0;
+    return Math.max(...opportunities.map((o) => o.liquidity));
+  }, [opportunities]);
 
   const addEvent = (message: string, type: TimelineEvent["type"]) => {
     setEvents((prev) => [{ id: Math.random().toString(36).slice(2), timestamp: new Date().toISOString(), message, type }, ...prev].slice(0, 20));
@@ -258,21 +264,25 @@ export default function Home() {
     decisionSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const fetchOpportunities = async () => {
+  const fetchOpportunities = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/yield", { cache: "no-store" });
+      const qs = address ? `?address=${encodeURIComponent(address)}` : "";
+      const response = await fetch(`/api/yield${qs}`, { cache: "no-store", credentials: "include" });
       const data = await response.json();
       const rows: YieldOpportunity[] = Array.isArray(data?.opportunities) ? data.opportunities : [];
-      setOpportunities(rows.sort((a, b) => b.apr - a.apr));
+      setOpportunities(rows);
+      if (typeof data?.yieldTableUnlocked === "boolean") {
+        setPremiumUnlocked(data.yieldTableUnlocked);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [address]);
 
   useEffect(() => {
-    fetchOpportunities();
-  }, []);
+    void fetchOpportunities();
+  }, [fetchOpportunities]);
 
   useEffect(() => {
     const loadKpis = async () => {
@@ -440,11 +450,12 @@ export default function Home() {
     const updateUnlockState = () => {
       const isFresh = Date.now() - new Date(lastPaidRunAt).getTime() <= PREMIUM_UNLOCK_WINDOW_MS;
       setPremiumUnlocked(isFresh);
+      if (!isFresh) void fetchOpportunities();
     };
     updateUnlockState();
     const interval = setInterval(updateUnlockState, 30_000);
     return () => clearInterval(interval);
-  }, [lastPaidRunAt]);
+  }, [lastPaidRunAt, fetchOpportunities]);
 
   useEffect(() => {
     if (decision) scrollToDecisionSection();
@@ -458,6 +469,7 @@ export default function Home() {
         const response = await fetch("/api/paid-data", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({})
         });
         if (response.status !== 402) return;
@@ -634,6 +646,7 @@ export default function Home() {
       const initialResponse = await fetch("/api/paid-data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body
       });
 
@@ -666,6 +679,7 @@ export default function Home() {
               "Content-Type": "application/json",
               "X-DIRECT-PAYMENT-TX": paymentTx.hash
             },
+            credentials: "include",
             body: JSON.stringify({
               ...JSON.parse(body),
               payerAddress: address
@@ -690,6 +704,7 @@ export default function Home() {
               "Content-Type": "application/json",
               "X-PAYMENT": manualToken
             },
+            credentials: "include",
             body
           });
         }
@@ -710,6 +725,7 @@ export default function Home() {
       if (Array.isArray(payload.logs)) setEvents(payload.logs);
       setLastPaidRunAt(payload.createdAt || new Date().toISOString());
       setPremiumUnlocked(true);
+      await fetchOpportunities();
       addEvent(
         `Payment settled${payload.payment?.settlementReference ? ` (${payload.payment.settlementReference})` : ""}.`,
         "payment"
