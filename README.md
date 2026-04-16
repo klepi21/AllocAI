@@ -97,6 +97,31 @@ curl -sS -X POST "https://allocai-orcin.vercel.app/api/paid-data" \
 
 See pattern: `POST` without `X-PAYMENT` → read `402` → get token → `POST` with `X-PAYMENT` and same JSON body.
 
+### Optional: Python script — direct KITE pay + full JSON response
+
+For a **headless agent** that pays with **native KITE** (same path as the UI “Direct” flow: `X-DIRECT-PAYMENT-TX`), use:
+
+- `scripts/paid_data_agent_direct.py`
+- `scripts/requirements-python.txt`
+
+**This is not the x402 / Passport path** — x402 needs an `X-PAYMENT` token from Passport/facilitator signing, not a raw EOA key alone.
+
+```bash
+python3 -m venv .venv-py
+source .venv-py/bin/activate   # Windows: .venv-py\Scripts\activate
+pip install -r scripts/requirements-python.txt
+
+export AGENT_PRIVATE_KEY=0x...   # wallet that holds KITE (payer), NOT your server proof key unless you intend that
+export ALLOCAI_BASE_URL=https://allocai-orcin.vercel.app
+export NEXT_PUBLIC_KITE_RPC=https://rpc.gokite.ai/
+# Must match server DIRECT_KITE_FEE_WEI (default 0.25 KITE):
+export ALLOCAI_DIRECT_KITE_FEE_WEI=250000000000000000
+
+python3 scripts/paid_data_agent_direct.py
+```
+
+You can use `PAYING_AGENT_PRIVATE_KEY` instead of `AGENT_PRIVATE_KEY` if you want a name that won’t clash with server env naming.
+
 ### Amounts (do not hardcode wrong units)
 
 | Mode | What user/agent pays | Config on server |

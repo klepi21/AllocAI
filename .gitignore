@@ -30,6 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# local Python venv (scripts/paid_data_agent_direct.py)
+/.venv-py/
+**/__pycache__/
+
 # env files
 .env
 .env.local
