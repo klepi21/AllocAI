@@ -33,6 +33,7 @@ export async function GET() {
             action: "hold",
             reason: "Run consistency verified via Kitescan proof history.",
             confidence: 0.99,
+            paidDataUsed: true,
             selectedOpportunity: { chain: "Kite", protocol: "AllocAI", apr: 0, asset: "USDC", risk: "low", liquidity: 0 }
           },
           logs: []
