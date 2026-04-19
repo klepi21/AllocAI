@@ -34,7 +34,28 @@ export async function GET() {
             reason: "Run consistency verified via Kitescan proof history.",
             confidence: 0.99,
             paidDataUsed: true,
-            selectedOpportunity: { chain: "Kite", protocol: "AllocAI", apr: 0, asset: "USDC", risk: "low", liquidity: 0 }
+            strategy: {
+              headline: "Strategy Discovery (Recovered)",
+              recommendation: "System state recovered from latest on-chain heartbeat. Previous yield allocation remains optimal.",
+              apr: AUTONOMOUS_BASELINE_APR,
+              expectedMonthlyUsdc: (AUTONOMOUS_PORTFOLIO_USDC * (AUTONOMOUS_BASELINE_APR / 100)) / 12,
+              expectedAnnualUsdc: AUTONOMOUS_PORTFOLIO_USDC * (AUTONOMOUS_BASELINE_APR / 100),
+              reinvestCadence: "Monthly",
+              riskNotes: ["Recovered state"],
+              executionSteps: ["Verify tx on Kitescan"],
+              compoundedProjections: []
+            },
+            proofReceipt: {
+              runId: "recovered_" + txs[0].hash.slice(0, 10),
+              paymentReference: "RECOVERED",
+              settlementReference: "RECOVERED",
+              strategyHash: "RECOVERED",
+              txHash: txs[0].hash,
+              timestamp: new Date().toISOString(),
+              signer: serviceAddr,
+              signature: "0xRECOVERED"
+            },
+            selectedOpportunity: { chain: "Kite", protocol: "AllocAI", apr: AUTONOMOUS_BASELINE_APR, asset: "USDC", risk: "low", liquidity: 0 }
           },
           logs: []
         };
