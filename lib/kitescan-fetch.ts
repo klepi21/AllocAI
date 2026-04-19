@@ -36,9 +36,10 @@ export function decodeAllocaiFullSummary(rawInput: string | null | undefined): {
     const headline = parts[2] || "";
     
     // Attempt to extract APR from the headline string (e.g. "... APR 14.88% ...")
+    // Robust search for any number followed by % or preceded by APR
     let apr: number | null = null;
-    const aprMatch = headline.match(/APR\s+(\d+\.?\d*)%/i);
-    if (aprMatch) {
+    const aprMatch = headline.match(/APR\s*[:=]?\s*(\d+\.?\d*)\s*%/i) || headline.match(/(\d+\.?\d*)\s*%/);
+    if (aprMatch && aprMatch[1]) {
       apr = parseFloat(aprMatch[1]);
     }
 
