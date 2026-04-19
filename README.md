@@ -31,15 +31,6 @@ AllocAI is built to win on **demo depth**: it is a **Verified Intelligence Agent
 - **Autonomous** — `POST /api/autonomous/tick`, `GET /api/autonomous/status` (VPS cron recommended).
 - **Guardrails + KPIs** — policy limits + `GET /api/kpi`.
 
-## Why It Wins (Judge Angle)
-
-| Hook | What to say |
-|------|-------------|
-| **Kite narrative** | Native chain + Passport x402 + proof on Kite explorers. |
-| **Integrations** | Lucid Bridge + swap + multichain USDC—not slides, **in the app**. |
-| **Agentic** | Any x402-capable agent can pay and consume the same API as the UI. |
-| **Verifiable** | Fixed fee, on-chain proof tx, run history with links. |
-
 ## API Surface (MVP)
 
 | Method | Path | Purpose |
@@ -160,36 +151,4 @@ Open `http://localhost:3000`.
 1. Set `AUTONOMOUS_TICK_SECRET`, `AUTONOMOUS_INTERVAL_MS=86400000` (once/day), deploy.
 2. On VPS: `AUTONOMOUS_TICK_URL=https://allocai-orcin.vercel.app/api/autonomous/tick` (or your host) + same secret.
 3. `npm run autonomous:tick` or cron every 10–15 min (cooldown enforced server-side).
-
-## 3-Minute Live Demo (Judges)
-
-1. Open **[https://allocai-orcin.vercel.app/](https://allocai-orcin.vercel.app/)**.
-2. Connect wallet, show yield table + **Live Source: DeFiLlama**.
-3. **Lucid Bridge** destination + **Swap** tab; **USDC by Chain** panel.
-4. **Run The Agent** — fee line + Direct vs x402; run one paid path.
-5. Show **strategy**, **compounding**, **protocol link**, **proof tx**, **Latest Agent Runs** + explorer.
-6. **KPI** + **Autonomous** countdown (no button needed).
-
-## 3-Minute Pitch Outline (Video)
-
-Use this beat for a tight **~180s** recording:
-
-| Time | Beat |
-|------|------|
-| 0:00–0:20 | Hook: *Kite is the chain where agents pay and prove—AllocAI is the demo that shows it.* |
-| 0:20–0:50 | Problem: yield noise, no trust without payment + proof. |
-| 0:50–1:30 | **Live URL** — yield table → pay → strategy + proof hash. |
-| 1:30–2:15 | Integrations: Lucid, swap, multichain USDC; x402 for agents. |
-| 2:15–2:50 | Autonomous + KPIs + guardrails; why it’s production-shaped. |
-| 2:50–3:00 | Close: *Pay once, verify forever on Kite.* |
-
-## Production Readiness Snapshot
-
-- **Public URL:** [https://allocai-orcin.vercel.app/](https://allocai-orcin.vercel.app/)
-- Keep 1–2 recent proof tx hashes handy for live explorer verification.
-- VPS scheduler optional but strengthens “autonomous agent” story.
-
-## Scope Notes
-
-- Hackathon MVP: docs match **what runs** in this repo.
-- Older contract-heavy narratives are intentionally out of scope here.
+```
