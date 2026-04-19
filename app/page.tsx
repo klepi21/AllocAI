@@ -899,6 +899,7 @@ export default function Home() {
                   <div className="mt-3 rounded-xl bg-[#080808] border border-white/10 p-3">
                     <p className="text-[8px] font-black uppercase tracking-[0.15em] text-gray-500">
                       Latest run {autonomousStatus.latest.runId.slice(0, 10)}...
+                    </p>
                     <p className="text-[10px] font-black text-white mt-1">
                       {autonomousStatus.latest.decision?.strategy?.headline || autonomousStatus.latest.decision?.reason || "No narrative yet"}
                     </p>
