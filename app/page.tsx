@@ -899,11 +899,25 @@ export default function Home() {
                   <div className="mt-3 rounded-xl bg-[#080808] border border-white/10 p-3">
                     <p className="text-[8px] font-black uppercase tracking-[0.15em] text-gray-500">
                       Latest run {autonomousStatus.latest.runId.slice(0, 10)}...
-                    </p>
                     <p className="text-[10px] font-black text-white mt-1">
                       {autonomousStatus.latest.decision?.strategy?.headline || autonomousStatus.latest.decision?.reason || "No narrative yet"}
                     </p>
-                    <p className="text-[8px] font-black uppercase tracking-[0.15em] text-gray-400 mt-1">
+                    <div className="flex items-center gap-3 mt-2">
+                      <p className="text-[10px] font-black text-emerald-400">
+                        APR {autonomousStatus.latest.decision?.strategy?.apr ?? autonomousStatus.baselineApr}%
+                      </p>
+                      {autonomousStatus.latest.decision?.proofReceipt?.txHash && (
+                        <a 
+                          href={`https://kitescan.ai/tx/${autonomousStatus.latest.decision.proofReceipt.txHash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[8px] font-black uppercase tracking-widest text-[#B3A288] hover:text-white transition-colors"
+                        >
+                          View Proof ↗
+                        </a>
+                      )}
+                    </div>
+                    <p className="text-[7px] font-black uppercase tracking-[0.15em] text-gray-500 mt-2">
                       Response {autonomousStatus.latest.responseTimeMs ?? 0} ms · {autonomousStatus.latest.success ? "success" : "failed"}
                     </p>
                   </div>

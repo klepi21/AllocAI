@@ -26,7 +26,7 @@ export async function GET() {
           paymentReference: "AUTONOMOUS_RECOVERED",
           settlementReference: "AUTONOMOUS_RECOVERED",
           paymentTo: serviceAddr,
-          createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // Assume it was 15 mins ago for UI state persistence
+          createdAt: txs[0].timestamp || new Date(Date.now() - 1000 * 60 * 15).toISOString(), 
           runType: "autonomous",
           success: true,
           decision: {

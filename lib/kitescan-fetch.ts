@@ -8,6 +8,8 @@ export interface KitescanTx {
   result?: string | null;
   status?: string | null;
   raw_input?: string | null;
+  timestamp?: string | null;
+  block_number?: number | null;
 }
 
 export function kitescanAddressLower(value: string | KitescanTx["from"]): string {
