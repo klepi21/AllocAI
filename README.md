@@ -1,26 +1,26 @@
 # AllocAI
 
-**One-liner:** *The Kite-native yield copilot that turns live DeFiLlama data into paid AI strategies—with **x402 agent payments**, **on-chain proof**, and **Lucid + swap + multichain USDC** in one dashboard.*
+**One-liner:** *The Kite-native **Yield Intelligence Layer** that discovers hidden DeFi opportunities and unlocks actionable Alpha—with **x402 agent payments**, **on-chain proof**, and **Lucid + swap + multichain USDC** in one dashboard.*
 
 **Live app:** [https://allocai-orcin.vercel.app/](https://allocai-orcin.vercel.app/)
 
-AllocAI is built to win on **demo depth**: users can open the live URL, connect a wallet, see real yield rows, pay once, and verify strategy + proof on [Kitescan](https://kitescan.ai/). It is **KITE-first**—identity-aware agent flows, native KITE for humans, and **Passport x402** for autonomous agents—while surfacing **Lucid Bridge**, **swap aggregation**, and **multi-chain USDC balances** as first-class integrations.
+AllocAI is built to win on **demo depth**: it is a **Verified Intelligence Agent** that turns the chaos of 50+ chains and 1,000+ protocols into a clear signal. Users pay the agent to unlock specific, vetted yield strategies which they can then execute instantly using the integrated **Lucid Bridge** and **Swap Aggregator**. It is **KITE-first**—identity-aware agent flows, native KITE for humans, and **Passport x402** for autonomous agents—while anchoring every piece of intelligence with a permanent **on-chain proof** on [Kitescan](https://kitescan.ai/).
 
 ## KITE Ecosystem Integrations
 
-- **KITE network-first UX** — wallet, payments, and proof are centered on Kite mainnet.
-- **Lucid Bridge** — in-app bridge panel routes USDC from Kite to supported destination chains.
-- **Swap aggregator** — quick swap for KITE / WKITE / USDC-style flows.
-- **Multi-chain USDC balances** — backend reads balances across Kite, Arbitrum, Avalanche, Optimism, Base, BSC, and Celo.
+- **KITE network-first UX** — Intelligence, payments, and proof are centered on Kite mainnet.
+- **On-Chain Intelligence Proofs** — Every recommendation is hashed and anchored to the Kite blockchain, making the agent's signal verifiable and immutable.
+- **Lucid Bridge** — Seamless transition from "Agent Signal" to "User Execution" via the in-app bridge panel.
+- **Swap aggregator** — Gasless swap for KITE / WKITE / USDC-style flows, ensuring anyone can start with just USDC.
+- **Multi-chain USDC balances** — Real-time visibility across Kite, Arbitrum, Avalanche, Optimism, Base, BSC, and Celo.
 
-## What This Project Does (Current MVP)
+## What This Project Does (Yield Intelligence Flow)
 
-1. Live cross-chain USDC opportunities (DeFiLlama) in a **yield table** with lock/unlock UX.
-2. **Run The Agent** — fixed fee: **0.25 KITE** (direct wallet) or **0.25 USDC.e** (x402 / Passport), strategy + LLM narrative + compounding estimates.
-3. **Two payment modes:** direct native KITE tx, or **x402** with `X-PAYMENT` + facilitator settlement.
-4. **On-chain proof** — service wallet publishes verifiable proof; explorer links in UI.
-5. **Latest runs** — up to 5 runs per wallet with payment/proof/status and explorer metadata.
-6. **Autonomous test portfolio** — scheduled backend tick (e.g. daily), guardrails, KPIs.
+1. **Alpha Discovery:** The agent deep-scans DeFiLlama and multi-chain data to identify high-yield USDC pockets (e.g., 12% on Aave/Base).
+2. **Verified Unlock:** Users pay a fixed fee of **0.25 KITE** (direct) or **0.25 USDC.e** (x402 Passport) to unlock the detailed research package.
+3. **Actionable Logic:** The agent provides a narrative reason for the move, projected compounding metrics, and 1-click **"Prepare Bridge"** shortcuts.
+4. **On-chain Trace:** A service wallet publishes the intelligence proof; users can verify the agent was tracking the pool live.
+5. **Guided Execution:** Once the alpha is unlocked, users use the integrated tools to move capital with confidence.
 
 ## What Is Working Now
 

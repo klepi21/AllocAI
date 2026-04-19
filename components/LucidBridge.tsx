@@ -27,9 +27,10 @@ interface Props {
   address: string;
   onToggleMode?: () => void;
   toggleLabel?: string;
+  prefilledChain?: string | null;
 }
 
-export default function LucidBridge({ signer, address, onToggleMode, toggleLabel }: Props) {
+export default function LucidBridge({ signer, address, onToggleMode, toggleLabel, prefilledChain }: Props) {
   const [amount, setAmount] = useState("");
   const [running, setRunning] = useState(false);
   const [usdcBalance, setUsdcBalance] = useState("0.00");
@@ -132,6 +133,12 @@ export default function LucidBridge({ signer, address, onToggleMode, toggleLabel
     };
     loadQuote();
   }, [signer, address, sanitizedAmount, selectedDestinationChainId]);
+
+  useEffect(() => {
+    if (!prefilledChain) return;
+    const match = destinations.find(d => d.name.toLowerCase() === prefilledChain.toLowerCase());
+    if (match) setSelectedDestinationChainId(match.chainId);
+  }, [prefilledChain, destinations]);
 
   const bridgeNow = async () => {
     if (!signer || !address || !amount || insufficientBalance) return;

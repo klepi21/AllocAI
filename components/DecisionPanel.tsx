@@ -17,30 +17,41 @@ interface Props {
   } | null;
   status: string;
   onRunAgent: () => void;
+  onPrepareBridge?: (chain: string) => void;
 }
 
-const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, status }) => {
+const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, status, onPrepareBridge }) => {
   const txExplorerBase = CURRENT_NETWORK.explorerUrl.replace(/\/+$/, "");
   const isProcessing = status !== "idle";
   const processingMessages = [
-    "Agent is thinking...",
-    "Searching best strategies...",
-    "Comparing risk-adjusted routes...",
-    "Estimating projected compounding yield...",
-    "Preparing payment and on-chain proof..."
+    "Initializing secure intelligence environment...",
+    "Aggregating global yield data from DeFiLlama API...",
+    "Deep-scanning Base, Ethereum, and Arbitrum for hidden USDC alpha...",
+    "Validating protocol security metrics and liquidity health...",
+    "Vetting 'Lucid-Compatible' routes for seamless user bridging...",
+    "Computing optimal strategy for premium data unlock...",
+    "Calculating yield surplus for verified intelligence fee...",
+    "Generating cryptographically signed alpha package...",
+    "Anchoring strategic proof and recommendation on Kite Mainnet..."
   ];
   const [processingMsgIdx, setProcessingMsgIdx] = useState(0);
+  const [thoughtStream, setThoughtStream] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isProcessing) {
       setProcessingMsgIdx(0);
+      setThoughtStream([]);
       return;
     }
     const interval = setInterval(() => {
       setProcessingMsgIdx((prev) => (prev + 1) % processingMessages.length);
-    }, 1800);
+      setThoughtStream(prev => {
+        const next = [...prev, processingMessages[processingMsgIdx]];
+        return next.slice(-4);
+      });
+    }, 2000);
     return () => clearInterval(interval);
-  }, [isProcessing, processingMessages.length]);
+  }, [isProcessing, processingMessages.length, processingMsgIdx]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -220,21 +231,26 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
                 </a>
               </div>
             ) : null}
-            {enterStrategyUrl ? (
-              <div className="mt-3">
-                <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">
-                  Protocol app
-                </p>
-                <a
-                  href={enterStrategyUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-xl border border-[#B3A288]/40 bg-[#B3A288]/15 px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#f8dba8] hover:bg-[#B3A288]/25"
-                >
-                  Enter strategy
-                </a>
-              </div>
-            ) : null}
+              {enterStrategyUrl ? (
+                <div className="mt-3 flex gap-2">
+                  <a
+                    href={enterStrategyUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center rounded-xl border border-[#B3A288]/40 bg-[#B3A288]/15 px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#f8dba8] hover:bg-[#B3A288]/25 transition-all"
+                  >
+                    Enter strategy
+                  </a>
+                  {onPrepareBridge && chainBadge && chainBadge.toLowerCase() !== "kite" && (
+                    <button
+                      onClick={() => onPrepareBridge(chainBadge)}
+                      className="inline-flex items-center justify-center rounded-xl border border-blue-500/40 bg-blue-500/15 px-5 py-2.5 text-[10px] font-black uppercase tracking-[0.15em] text-blue-200 hover:bg-blue-500/25 transition-all"
+                    >
+                      Prepare Bridge
+                    </button>
+                  )}
+                </div>
+              ) : null}
           </div>
           
           <div className="flex flex-col items-center justify-center p-8 bg-[#080808] rounded-[2rem] border border-white/10 min-w-[180px] shadow-2xl backdrop-blur-3xl animate-in fade-in zoom-in slide-in-from-right-4">
@@ -247,13 +263,26 @@ const DecisionPanel: React.FC<Props> = ({ decision, latestHistoryDecision, statu
       )}
 
       {isProcessing ? (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/55 backdrop-blur-md">
-          <div className="w-14 h-14 rounded-full border-2 border-white/10 border-t-[#B3A288] animate-spin mb-6" />
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/75 backdrop-blur-md">
+          <div className="w-14 h-14 rounded-full border-2 border-white/10 border-t-[#B3A288] animate-spin mb-8" />
+          
+          <div className="w-full max-w-md bg-[#080808]/80 border border-white/10 rounded-xl p-4 font-mono text-[9px] space-y-2 mb-4">
+             {thoughtStream.map((msg, i) => (
+                <div key={i} className={`flex gap-3 ${i === thoughtStream.length - 1 ? "text-[#B3A288]" : "text-gray-500"}`}>
+                   <span className="opacity-50">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                   <span className={i === thoughtStream.length - 1 ? "animate-pulse" : ""}>
+                     {i === thoughtStream.length - 1 ? "> " : "  "}
+                     {msg}
+                   </span>
+                </div>
+             ))}
+          </div>
+
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#B3A288] text-center px-6">
-            {processingMessages[processingMsgIdx]}
+            Agent Decision Engine Operating...
           </p>
           <p className="text-[8px] font-black uppercase tracking-[0.15em] text-gray-500 mt-3">
-            strategy engine running
+             {processingMessages[processingMsgIdx]}
           </p>
         </div>
       ) : null}

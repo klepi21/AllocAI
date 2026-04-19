@@ -246,6 +246,7 @@ export default function Home() {
   const [kpis, setKpis] = useState<KpiSnapshot | null>(null);
   const [autonomousStatus, setAutonomousStatus] = useState<AutonomousStatus | null>(null);
   const [countdownNowMs, setCountdownNowMs] = useState(Date.now());
+  const [bridgePrefill, setBridgePrefill] = useState<{ chain: string; amount?: string } | null>(null);
 
   const topApr = useMemo(() => {
     if (!opportunities.length) return 0;
@@ -854,6 +855,7 @@ export default function Home() {
                   address={address || ""}
                   onToggleMode={() => setActiveActionTab("swap")}
                   toggleLabel="toggle to Swap"
+                  prefilledChain={bridgePrefill?.chain}
                 />
               )}
             </div>
@@ -862,7 +864,17 @@ export default function Home() {
 
         <div ref={decisionSectionRef} className="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-8 items-stretch">
           <div className="xl:col-span-12">
-            <DecisionPanel decision={decision} latestHistoryDecision={proofs[0]} status={status} onRunAgent={handleRunAgent} />
+            <DecisionPanel
+              decision={decision}
+              latestHistoryDecision={proofs[0]}
+              status={status}
+              onRunAgent={handleRunAgent}
+              onPrepareBridge={(chain) => {
+                setBridgePrefill({ chain });
+                setActiveActionTab("bridge");
+                toast.success(`BRIDGE PREPARED`, { description: `Destination set to ${chain}. Enter amount to begin.` });
+              }}
+            />
           </div>
         </div>
 
