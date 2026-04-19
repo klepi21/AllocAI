@@ -33,7 +33,8 @@ export function decodeAllocaiFullSummary(rawInput: string | null | undefined): {
     if (!decoded.startsWith("ALLOCAI_SUMMARY|")) return null;
     const parts = decoded.split("|");
     const runId = parts[1] || "";
-    const headline = parts[2] || "";
+    // Smart fix: Join everything from parts[2] onwards in case the summary contains its own pipes
+    const headline = parts.slice(2).join(" | ").trim();
     
     // Attempt to extract APR from the headline string (e.g. "... APR 14.88% ...")
     // Robust search for any number followed by % or preceded by APR
