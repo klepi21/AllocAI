@@ -787,6 +787,8 @@ export default function Home() {
       setStatus("idle");
       setInModalLoadingStep(0);
     }
+  };
+
   if (!enteredApp) {
     return (
       <div className="min-h-screen bg-[#080808] text-white overflow-x-hidden relative flex flex-col justify-between selection:bg-[#B3A288]/20 selection:text-[#B3A288]">
