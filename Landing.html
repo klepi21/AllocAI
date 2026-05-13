@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllocAI | The Kite-Native Yield Intelligence Layer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { 
+      --bg-base: #080808; 
+      --panel-bg: #151515; 
+      --accent-gold: #B3A288; 
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    .glass-card {
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(179, 162, 136, 0.45);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, rgba(179, 162, 136, 0.25), rgba(179, 162, 136, 0.05));
+      border: 1px solid rgba(179, 162, 136, 0.55);
+      color: #f8dba8;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 200ms ease;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, rgba(179, 162, 136, 0.45), rgba(179, 162, 136, 0.15));
+      border-color: rgba(179, 162, 136, 0.9);
+      color: #ffffff;
+      box-shadow: 0 0 25px rgba(179, 162, 136, 0.25);
+    }
+    .btn-emerald {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      color: #6ee7b7;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: all 200ms ease;
+    }
+    .btn-emerald:hover {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(16, 185, 129, 0.1));
+      border-color: rgba(52, 211, 153, 0.9);
+      color: #ffffff;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+    }
+    .glow-sphere {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #ffffff 20%, #B3A288 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .badge-pill {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between">
+
+  <!-- Background Ambience Glows -->
+  <div class="glow-sphere w-[600px] h-[600px] bg-[#B3A288]/10 top-[-100px] left-[-150px]"></div>
+  <div class="glow-sphere w-[700px] h-[700px] bg-emerald-500/5 right-[-200px] top-[300px]"></div>
+
+  <!-- Navigation Bar -->
+  <header class="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between relative z-50">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#B3A288]/40 to-[#080808] border border-[#B3A288]/30 flex items-center justify-center font-black text-lg text-[#f8dba8]">
+        A
+      </div>
+      <span class="text-2xl font-black tracking-tight text-white">Alloc<span class="text-[#B3A288]">AI</span></span>
+    </div>
+    <nav class="hidden md:flex items-center gap-8 text-xs font-black tracking-[0.2em] uppercase text-gray-400">
+      <a href="#hero" class="hover:text-white transition-colors">Overview</a>
+      <a href="#showcase" class="hover:text-white transition-colors">DApp Capabilities</a>
+      <a href="./Presentation.html" class="hover:text-[#B3A288] transition-colors">Product Deck</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <a href="https://allocai-orcin.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-emerald px-5 py-2.5 rounded-xl text-xs">
+        Launch App ↗
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-1 flex flex-col items-center justify-center relative z-40 px-6 pt-12 pb-24 text-center max-w-5xl mx-auto">
+    <div class="flex flex-wrap justify-center gap-3 mb-8 animate-fade-in">
+      <span class="badge-pill text-[#B3A288] border-[#B3A288]/30 bg-[#B3A288]/5">◆ Kite Mainnet Native</span>
+      <span class="badge-pill text-emerald-400 border-emerald-500/30 bg-emerald-500/5">● x402 Agent Payments Enabled</span>
+      <span class="badge-pill text-blue-400 border-blue-500/30 bg-blue-500/5">Verified Proof Receipts</span>
+    </div>
+
+    <h1 class="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.05] mb-8 max-w-4xl">
+      The Kite-Native Yield <br><span class="text-gradient-gold">Intelligence Layer</span>
+    </h1>
+
+    <p class="text-base sm:text-lg text-gray-300 max-w-3xl leading-relaxed mb-12 font-medium">
+      Discover high-alpha USDC stablecoin pockets across 7 leading chains instantly. Powered by deep DeFiLlama synchronization, interactive <strong>Thought Stream quant telemetry</strong>, integrated <strong>Lucid Bridge pre-filling</strong>, and true serverless persistent healing via real-time blockchain proof validation.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
+      <a href="https://allocai-orcin.vercel.app/" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto btn-gold px-8 py-4 rounded-xl text-xs text-center flex items-center justify-center gap-2">
+        Launch DApp Live <span class="text-base">🚀</span>
+      </a>
+      <a href="./Presentation.html" class="w-full sm:w-auto glass-card px-8 py-4 rounded-xl text-xs font-black tracking-widest uppercase text-gray-300 hover:text-white text-center border-white/10">
+        Read Product Deck 📄
+      </a>
+    </div>
+
+    <!-- Live Performance Meta Line -->
+    <div class="mt-16 pt-8 border-t border-white/5 w-full max-w-2xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Live Yield Source</p>
+        <p class="text-xs font-black text-gray-200 mt-1">DeFiLlama API</p>
+      </div>
+      <div>
+        <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Supported Networks</p>
+        <p class="text-xs font-black text-emerald-400 mt-1">7 Chains Monitored</p>
+      </div>
+      <div>
+        <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Agent Settlement</p>
+        <p class="text-xs font-black text-[#B3A288] mt-1">Passport x402 Protocol</p>
+      </div>
+      <div>
+        <p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Cryptographic Ledger</p>
+        <p class="text-xs font-black text-blue-400 mt-1">Kitescan Anchor</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Showcase Section: DApp Ecosystem & Features -->
+  <section id="showcase" class="w-full bg-[#0b0b0b] border-t border-white/5 py-24 relative z-40">
+    <div class="max-w-7xl mx-auto px-6">
+      
+      <!-- Section Intro -->
+      <div class="text-center max-w-2xl mx-auto mb-20">
+        <p class="text-[10px] font-black tracking-[0.3em] text-[#B3A288] uppercase mb-3">Architectural Excellence</p>
+        <h2 class="text-3xl sm:text-4xl font-black tracking-tight">Showcase &amp; Core DApp Capabilities</h2>
+        <p class="text-xs text-gray-400 mt-3 font-medium leading-relaxed">
+          Engineered as a robust zero-maintenance environment for hackathon verification and continuous production telemetry.
+        </p>
+      </div>
+
+      <!-- Chain Support Strip -->
+      <div class="mb-16 glass-card p-6 rounded-2xl flex flex-wrap items-center justify-around gap-6 border-white/5 bg-[#121212]/50">
+        <div class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 w-full text-center pb-2 border-b border-white/5 mb-2">
+          Real-Time USDC Multi-Chain Monitoring
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#B3A288]"></span>
+          <span class="text-xs font-black tracking-wider text-white">KITE AI</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+          <span class="text-xs font-black tracking-wider text-gray-300">ARBITRUM</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-red-400"></span>
+          <span class="text-xs font-black tracking-wider text-gray-300">AVALANCHE</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-red-500"></span>
+          <span class="text-xs font-black tracking-wider text-gray-300">OPTIMISM</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          <span class="text-xs font-black tracking-wider text-gray-300">BASE</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+          <span class="text-xs font-black tracking-wider text-gray-300">BSC</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span class="text-xs font-black tracking-wider text-gray-300">CELO</span>
+        </div>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-[#B3A288]/5 rounded-bl-full transition-all group-hover:bg-[#B3A288]/10"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-[#B3A288]/10 border border-[#B3A288]/20 flex items-center justify-center text-lg mb-6">
+              📊
+            </div>
+            <h3 class="text-base font-black tracking-tight mb-3">Live Yield Synchronization</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-medium">
+              Synchronizes continuously with the live DeFiLlama data pipeline. Captures top-ranked stablecoin pools natively, ensuring allocation metrics directly represent live active total value locked and highest sustainable yields.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-[#B3A288]">
+            <span>Filter</span>
+            <span class="text-gray-500">USDC Stablecoins</span>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full transition-all group-hover:bg-emerald-500/10"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-lg mb-6">
+              🔐
+            </div>
+            <h3 class="text-base font-black tracking-tight mb-3">Passport x402 Agentic Gate</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-medium">
+              Full compatibility with headless API queries. Returns standardized HTTP 402 multi-accept payment challenge blocks. Fully authenticates verified x402 token authorization payloads generated by external agent runtimes.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-emerald-400">
+            <span>Settle</span>
+            <span class="text-gray-500">0.25 USDC.e</span>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-full transition-all group-hover:bg-blue-500/10"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-lg mb-6">
+              ⛓️
+            </div>
+            <h3 class="text-base font-black tracking-tight mb-3">On-Chain Cryptographic Proof</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-medium">
+              Every quantitative run executes a digital signature handshake and dispatches proof telemetry to Kitescan. Guarantees true auditability by permanently hashing the specific strategy payload and target APR parameters.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-blue-400">
+            <span>Ledger</span>
+            <span class="text-gray-500">Kite Explorer Anchor</span>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-bl-full transition-all group-hover:bg-purple-500/10"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-lg mb-6">
+              🌉
+            </div>
+            <h3 class="text-base font-black tracking-tight mb-3">Lucid Bridge Integration</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-medium">
+              Seamlessly connects pure research to direct on-chain execution. In-app navigation triggers automated target network mapping in the integrated Lucid Bridge component, reducing complex capital migration paths to single-click intents.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-purple-400">
+            <span>Suite</span>
+            <span class="text-gray-500">Bridge &amp; Swap Hooks</span>
+          </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full transition-all group-hover:bg-amber-500/10"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-lg mb-6">
+              🧠
+            </div>
+            <h3 class="text-base font-black tracking-tight mb-3">Thought Stream Terminal UI</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-medium">
+              Real-time terminal visualization inside the decision module renders underlying quant calculations step-by-step. Exposes risk matrix parameters, slippage modeling, and LLM synthesis live during decision lock states.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-amber-400">
+            <span>Telemetry</span>
+            <span class="text-gray-500">Interactive Alpha Shell</span>
+          </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="glass-card p-8 flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-bl-full transition-all group-hover:bg-rose-500/10"></div>
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-lg mb-6">
+              🛡️
+            </div>
+            <h3 class="text-base font-black tracking-tight mb-3">Serverless Persistence Recovery</h3>
+            <p class="text-xs text-gray-300 leading-relaxed font-medium">
+              Eliminates transient session degradation. When static container memory clears, the backend autonomously reads the transaction ledger directly from Kitescan via robust summary decoding, instantly restoring full timeline consistency.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-rose-400">
+            <span>Hardening</span>
+            <span class="text-gray-500">Zero-Maintenance State</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer Banner inside Showcase -->
+      <div class="mt-16 text-center">
+        <a href="https://allocai-orcin.vercel.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase text-[#B3A288] hover:text-white underline decoration-[#B3A288]/40 transition-all">
+          Experience Verifiable Alpha on Kite AI ↗
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-white/5 py-8 text-center text-xs text-gray-600 uppercase tracking-[0.2em] font-black bg-[#050505] relative z-40">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <span>AllocAI © 2026</span>
+      <span class="text-[#B3A288]/60">Kite Hackathon MVP Submission</span>
+      <div class="flex gap-6">
+        <a href="./Presentation.html" class="hover:text-gray-400 transition-colors">Product Deck</a>
+        <a href="https://allocai-orcin.vercel.app/" target="_blank" rel="noopener noreferrer" class="hover:text-gray-400 transition-colors">Launch DApp</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

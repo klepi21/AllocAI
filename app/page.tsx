@@ -247,6 +247,13 @@ export default function Home() {
   const [autonomousStatus, setAutonomousStatus] = useState<AutonomousStatus | null>(null);
   const [countdownNowMs, setCountdownNowMs] = useState(Date.now());
   const [bridgePrefill, setBridgePrefill] = useState<{ chain: string; amount?: string } | null>(null);
+  const [enteredApp, setEnteredApp] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("strategyRun")) {
+      setEnteredApp(true);
+    }
+  }, []);
 
   const topApr = useMemo(() => {
     if (!opportunities.length) return 0;
@@ -780,7 +787,271 @@ export default function Home() {
       setStatus("idle");
       setInModalLoadingStep(0);
     }
-  };
+  if (!enteredApp) {
+    return (
+      <div className="min-h-screen bg-[#080808] text-white overflow-x-hidden relative flex flex-col justify-between selection:bg-[#B3A288]/20 selection:text-[#B3A288]">
+        {/* Ambient Glows */}
+        <div className="absolute top-[-100px] left-[-150px] w-[600px] h-[600px] rounded-full bg-[#B3A288]/10 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[200px] right-[-200px] w-[700px] h-[700px] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+
+        {/* Header */}
+        <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between relative z-50">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#B3A288]/40 to-[#080808] border border-[#B3A288]/30 flex items-center justify-center font-black text-lg text-[#f8dba8]">
+              A
+            </div>
+            <span className="text-2xl font-black tracking-tight text-white">Alloc<span className="text-[#B3A288]">AI</span></span>
+          </div>
+          <nav className="hidden md:flex items-center gap-8 text-xs font-black tracking-[0.2em] uppercase text-gray-400">
+            <a href="#capabilities" className="hover:text-white transition-colors">DApp Capabilities</a>
+            <a href="./Presentation.html" target="_blank" rel="noopener noreferrer" className="hover:text-[#B3A288] transition-colors">Product Deck</a>
+          </nav>
+          <div>
+            <button
+              onClick={() => setEnteredApp(true)}
+              className="px-5 py-2.5 rounded-xl text-xs font-black tracking-widest uppercase bg-gradient-to-r from-emerald-500/20 to-emerald-500/5 border border-emerald-500/50 text-emerald-400 hover:text-white hover:border-emerald-400 transition-all shadow-lg shadow-emerald-500/5"
+            >
+              Launch App ↗
+            </button>
+          </div>
+        </header>
+
+        {/* Hero Section */}
+        <main className="flex-1 flex flex-col items-center justify-center relative z-40 px-6 pt-12 pb-24 text-center max-w-5xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <span className="px-4 py-1.5 rounded-full text-[11px] font-black tracking-[0.2em] uppercase border border-[#B3A288]/30 bg-[#B3A288]/5 text-[#B3A288]">◆ Kite Mainnet Native</span>
+            <span className="px-4 py-1.5 rounded-full text-[11px] font-black tracking-[0.2em] uppercase border border-emerald-500/30 bg-emerald-500/5 text-emerald-400">● x402 Agent Payments Enabled</span>
+            <span className="px-4 py-1.5 rounded-full text-[11px] font-black tracking-[0.2em] uppercase border border-blue-500/30 bg-blue-500/5 text-blue-400">Verified Proof Receipts</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.05] mb-8 max-w-4xl">
+            The Kite-Native Yield <br /><span className="bg-gradient-to-r from-white via-white to-[#B3A288] bg-clip-text text-transparent">Intelligence Layer</span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-gray-300 max-w-3xl leading-relaxed mb-12 font-medium">
+            Discover high-alpha USDC stablecoin pockets across 7 leading chains instantly. Powered by deep DeFiLlama synchronization, interactive <strong>Thought Stream quant telemetry</strong>, integrated <strong>Lucid Bridge pre-filling</strong>, and true serverless persistent healing via real-time blockchain proof validation.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
+            <button
+              onClick={() => setEnteredApp(true)}
+              className="w-full sm:w-auto px-8 py-4 rounded-xl text-xs font-black tracking-widest uppercase bg-gradient-to-br from-[#B3A288]/25 to-[#B3A288]/5 border border-[#B3A288]/55 text-[#f8dba8] hover:text-white hover:border-[#B3A288] transition-all shadow-xl shadow-[#B3A288]/5 flex items-center justify-center gap-2"
+            >
+              Launch DApp Live <span className="text-base">🚀</span>
+            </button>
+            <a
+              href="./Presentation.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl text-xs font-black tracking-widest uppercase bg-[#151515]/80 border border-white/10 text-gray-300 hover:text-white transition-all text-center"
+            >
+              Read Product Deck 📄
+            </a>
+          </div>
+
+          {/* Live Meta Strip */}
+          <div className="mt-16 pt-8 border-t border-white/5 w-full max-w-2xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Live Yield Source</p>
+              <p className="text-xs font-black text-gray-200 mt-1">DeFiLlama API</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Supported Networks</p>
+              <p className="text-xs font-black text-emerald-400 mt-1">7 Chains Monitored</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Agent Settlement</p>
+              <p className="text-xs font-black text-[#B3A288] mt-1">Passport x402 Protocol</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Cryptographic Ledger</p>
+              <p className="text-xs font-black text-blue-400 mt-1">Kitescan Anchor</p>
+            </div>
+          </div>
+        </main>
+
+        {/* Capabilities Showcase Section */}
+        <section id="capabilities" className="w-full bg-[#0b0b0b] border-t border-white/5 py-24 relative z-40">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-20">
+              <p className="text-[10px] font-black tracking-[0.3em] text-[#B3A288] uppercase mb-3">Architectural Excellence</p>
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Showcase &amp; Core DApp Capabilities</h2>
+              <p className="text-xs text-gray-400 mt-3 font-medium leading-relaxed">
+                Engineered as a robust zero-maintenance environment for hackathon verification and continuous production telemetry.
+              </p>
+            </div>
+
+            {/* Chain Support Strip */}
+            <div className="mb-16 bg-[#121212]/50 border border-white/5 p-6 rounded-2xl flex flex-wrap items-center justify-around gap-6 backdrop-blur-md">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 w-full text-center pb-2 border-b border-white/5 mb-2">
+                Real-Time USDC Multi-Chain Monitoring
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#B3A288]" />
+                <span className="text-xs font-black tracking-wider text-white">KITE AI</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-400" />
+                <span className="text-xs font-black tracking-wider text-gray-300">ARBITRUM</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-400" />
+                <span className="text-xs font-black tracking-wider text-gray-300">AVALANCHE</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="text-xs font-black tracking-wider text-gray-300">OPTIMISM</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                <span className="text-xs font-black tracking-wider text-gray-300">BASE</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-yellow-400" />
+                <span className="text-xs font-black tracking-wider text-gray-300">BSC</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-xs font-black tracking-wider text-gray-300">CELO</span>
+              </div>
+            </div>
+
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Card 1 */}
+              <div className="bg-[#151515]/85 border border-white/5 p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-[#B3A288]/40 transition-all">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#B3A288]/5 rounded-bl-full group-hover:bg-[#B3A288]/10 transition-all" />
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-[#B3A288]/10 border border-[#B3A288]/20 flex items-center justify-center text-lg mb-6">
+                    📊
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mb-3">Live Yield Synchronization</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    Synchronizes continuously with the live DeFiLlama data pipeline. Captures top-ranked stablecoin pools natively, ensuring allocation metrics directly represent live active total value locked and highest sustainable yields.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-[#B3A288]">
+                  <span>Filter</span>
+                  <span className="text-gray-500">USDC Stablecoins</span>
+                </div>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-[#151515]/85 border border-white/5 p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-bl-full group-hover:bg-emerald-500/10 transition-all" />
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-lg mb-6">
+                    🔐
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mb-3">Passport x402 Agentic Gate</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    Full compatibility with headless API queries. Returns standardized HTTP 402 multi-accept payment challenge blocks. Fully authenticates verified x402 token authorization payloads generated by external agent runtimes.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-emerald-400">
+                  <span>Settle</span>
+                  <span className="text-gray-500">0.25 USDC.e</span>
+                </div>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-[#151515]/85 border border-white/5 p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-blue-500/40 transition-all">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-full group-hover:bg-blue-500/10 transition-all" />
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-lg mb-6">
+                    ⛓️
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mb-3">On-Chain Cryptographic Proof</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    Every quantitative run executes a digital signature handshake and dispatches proof telemetry to Kitescan. Guarantees true auditability by permanently hashing the specific strategy payload and target APR parameters.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-blue-400">
+                  <span>Ledger</span>
+                  <span className="text-gray-500">Kite Explorer Anchor</span>
+                </div>
+              </div>
+
+              {/* Card 4 */}
+              <div className="bg-[#151515]/85 border border-white/5 p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-purple-500/40 transition-all">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-bl-full group-hover:bg-purple-500/10 transition-all" />
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-lg mb-6">
+                    🌉
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mb-3">Lucid Bridge Integration</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    Seamlessly connects pure research to direct on-chain execution. In-app navigation triggers automated target network mapping in the integrated Lucid Bridge component, reducing complex capital migration paths to single-click intents.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-purple-400">
+                  <span>Suite</span>
+                  <span className="text-gray-500">Bridge &amp; Swap Hooks</span>
+                </div>
+              </div>
+
+              {/* Card 5 */}
+              <div className="bg-[#151515]/85 border border-white/5 p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-amber-500/40 transition-all">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full group-hover:bg-amber-500/10 transition-all" />
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-lg mb-6">
+                    🧠
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mb-3">Thought Stream Terminal UI</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    Real-time terminal visualization inside the decision module renders underlying quant calculations step-by-step. Exposes risk matrix parameters, slippage modeling, and LLM synthesis live during decision lock states.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-amber-400">
+                  <span>Telemetry</span>
+                  <span className="text-gray-500">Interactive Alpha Shell</span>
+                </div>
+              </div>
+
+              {/* Card 6 */}
+              <div className="bg-[#151515]/85 border border-white/5 p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-rose-500/40 transition-all">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-bl-full group-hover:bg-rose-500/10 transition-all" />
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-lg mb-6">
+                    🛡️
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mb-3">Serverless Persistence Recovery</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    Eliminates transient session degradation. When static container memory clears, the backend autonomously reads the transaction ledger directly from Kitescan via robust summary decoding, instantly restoring full timeline consistency.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-rose-400">
+                  <span>Hardening</span>
+                  <span className="text-gray-500">Zero-Maintenance State</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-16 text-center">
+              <button
+                onClick={() => setEnteredApp(true)}
+                className="inline-flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase text-[#B3A288] hover:text-white underline decoration-[#B3A288]/40 transition-all"
+              >
+                Experience Verifiable Alpha on Kite AI ↗
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="w-full border-t border-white/5 py-8 text-center text-xs text-gray-600 uppercase tracking-[0.2em] font-black bg-[#050505] relative z-40">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span>AllocAI © 2026</span>
+            <span className="text-[#B3A288]/60">Kite Hackathon MVP Submission</span>
+            <div className="flex gap-6">
+              <a href="./Presentation.html" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">Product Deck</a>
+              <button onClick={() => setEnteredApp(true)} className="hover:text-gray-400 transition-colors">Launch DApp</button>
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#080808] pb-24 overflow-x-hidden relative">
